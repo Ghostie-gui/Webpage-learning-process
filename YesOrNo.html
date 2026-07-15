@@ -1,0 +1,37 @@
+<p id="announcedtext"> This is where announcements will come, very soon! </p> <br> 
+<!-- the above is an editable text space where various announcements will go, usually what used to be the print command will end up here -->
+<input type="text" id="inputspace" /> 
+<input type="button" id="inputdonebutton" value="Done Inputting!" />
+<!-- the above is an input space and button, the button should trigger various things-->
+<input type="button" id="startYesOrNobutton" value="Ask a Question!">
+
+<script>
+ 	let ToBePrintedQuestion = "Blank Placeholder";
+
+ 	function check_yes_or_no_answers() {
+ 		let VariableName = document.getElementById('inputspace').value.toLowerCase();
+
+ 		const yesAnswers = ["yes", "yeah", "y"];
+    	const noAnswers = ["no", "n"];
+
+ 		if (yesAnswers.includes(VariableName)) {
+ 			document.getElementById('announcedtext').textContent = "You said yes."; 
+        	return true; 
+    	} 
+    	else if (noAnswers.includes(VariableName)) {
+    		document.getElementById('announcedtext').textContent = "You said no."; 
+        	return false;
+        }
+        else {
+		document.getElementById('announcedtext').textContent = "Please enter a valid answer.";
+		}
+	}
+
+ 	function yes_or_no() {
+		document.getElementById('announcedtext').textContent = ToBePrintedQuestion;
+		document.getElementById('inputdonebutton').addEventListener('click', check_yes_or_no_answers);
+	}
+
+	document.getElementById('startYesOrNobutton').addEventListener('click', yes_or_no);
+
+</script>

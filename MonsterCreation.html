@@ -7,6 +7,7 @@
 <input type="button" id="startmonsterbutton" value="Create a New Monster" />
 
 <script>
+	let MonsterNumber = 0
 	const Monsterlist = [];
 	const HitPointAmounts = [];
 	const Abilities = {};
@@ -15,12 +16,28 @@
 	const ToHit = {};
 	const DamageModifiers = {};
 
-	let NewMonsterName = "Blank Placeholder"
+	// Below this will be let commands for various reused counter variables.
+	let AbilityNumber = 0
 
-	function add_monster_name() {
-		NewMonsterName = document.getElementById('inputspace').value
-	}
-	function new_monster() {
+	// Below this is the functions, in chronological order.
+	function new_monster_name_inquiry() {
 		document.getElementById('announcedtext').textContent = "What will be the name of your monster?";
 		document.getElementById('inputdonebutton').addEventListener('click', add_monster_name);
+	}
+
+	function add_monster_name() {
+		Monsterlist.push (document.getElementById('inputspace').value.trim());
+		document.getElementById('inputspace').value = "";
+		Abilities[MonsterNumber] = [];
+		DiceAmounts[MonsterNumber] = [];
+		DiceTypes[MonsterNumber] = [];
+		ToHit[MonsterNumber] = [];
+		DamageModifiers[MonsterNumber] = [];
+		MonsterNumber = MonsterNumber + 1;
+		ability_number_inquiry();
+	}
+
+	function ability_number_inquiry() {
+		document.getElementById('announcedtext').textContent = "Thank you! Now, how many abilities will it have? Please keep it under ten.";
+		document.getElementById('inputdonebutton').addEventListener('click', note_ability_number);
 	}

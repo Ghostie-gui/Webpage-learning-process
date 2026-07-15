@@ -1,5 +1,26 @@
 <p id="announcedtext"> This is where announcements will come, very soon! </p> <br> 
 <!-- the above is an editable text space where various announcements will go, usually what used to be the print command will end up here -->
+<p id="monsterinfolist"> This is where info on your monsters will be! </p> <br> 
 <input type="text" id="inputspace" /> 
 <input type="button" id="inputdonebutton" value="Done Inputting!" />
 <!-- the above is an input space and button, the button should trigger various things-->
+<input type="button" id="startmonsterbutton" value="Create a New Monster" />
+
+<script>
+	const Monsterlist = [];
+	const HitPointAmounts = [];
+	const Abilities = {};
+	const DiceAmounts = {};
+	const DiceTypes = {};
+	const ToHit = {};
+	const DamageModifiers = {};
+
+	let NewMonsterName = "Blank Placeholder"
+
+	function add_monster_name() {
+		NewMonsterName = document.getElementById('inputspace').value
+	}
+	function new_monster() {
+		document.getElementById('announcedtext').textContent = "What will be the name of your monster?";
+		document.getElementById('inputdonebutton').addEventListener('click', add_monster_name);
+	}

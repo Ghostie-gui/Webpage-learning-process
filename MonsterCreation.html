@@ -18,6 +18,8 @@
 
 	// Below this will be let commands for various reused counter variables.
 	let AbilityNumber = 0
+	let number = 0
+	let CurrentAbilityNumber = 0
 
 	// Below this is the functions, in chronological order.
 	function new_monster_name_inquiry() {
@@ -34,10 +36,74 @@
 		ToHit[MonsterNumber] = [];
 		DamageModifiers[MonsterNumber] = [];
 		MonsterNumber = MonsterNumber + 1;
-		ability_number_inquiry();
+		hit_points_inquiry();
 	}
+
+	function hit_points_inquiry() {
+		document.getElementById('announcedtext').textContent = "Thank you! Now, how many hit points will it have? Please keep it under 500.";
+		document.getElementById('inputdonebutton').removeEventListener('click', add_monster_name);
+		document.getElementById('inputdonebutton').addEventListener('click', note_hit_points);
+	}
+
+	function note_hit_points() {
+		number = (document.getElementById('inputspace').value)
+		HitPointNumber = Number(number)
+		if (!Number.isInteger(HitPointNumber) || number.trim() === "") {
+        	document.getElementById('announcedtext').textContent = "That's not a positive integer. How can you have that many hit points?";
+        	document.getElementById('inputspace').value = "";
+    	}
+    	else if (HitPointNumber < 1) {
+        	document.getElementById('announcedtext').textContent = "That's less than 1. How can you have that many hit points? Try higher!";
+        	document.getElementById('inputspace').value = "";
+		}
+		else if (HitPointNumber > 500) {
+        	document.getElementById('announcedtext').textContent = "That's too many. I can only handle up to 500.";
+      		document.getElementById('inputspace').value = "";
+		}
+		else {
+			document.getElementById('inputspace').value = "";
+			HitPointAmounts.push (HitPointNumber)
+			ability_number_inquiry();
+		}
+	}
+
 
 	function ability_number_inquiry() {
 		document.getElementById('announcedtext').textContent = "Thank you! Now, how many abilities will it have? Please keep it under ten.";
+		document.getElementById('inputdonebutton').removeEventListener('click', note_hit_points);
 		document.getElementById('inputdonebutton').addEventListener('click', note_ability_number);
 	}
+
+	function note_ability_number() {
+		number = (document.getElementById('inputspace').value)
+		AbilityNumber = Number(number)
+		if (!Number.isInteger(AbilityNumber) || number.trim() === "") {
+        	document.getElementById('announcedtext').textContent = "That's not a positive integer. How can you have that many abilities?";
+        	document.getElementById('inputspace').value = "";
+    	}
+    	else if (AbilityNumber < 1) {
+        	document.getElementById('announcedtext').textContent = "That's less than 1. How can you have that many abilities? Try higher!";
+        	document.getElementById('inputspace').value = "";
+		}
+		else if (AbilityNumber > 10) {
+        	document.getElementById('announcedtext').textContent = "That's too many. I can only handle up to 10.";
+      		document.getElementById('inputspace').value = "";
+		}
+		else {
+			document.getElementById('inputspace').value = "";
+			ability_name_inquiry();
+		}
+	}
+
+	function ability_name_inquiry() {
+		document.getElementById('announcedtext').textContent = "Thank you! Now, what will these " + AbilityNumber + " abilities be called? Input the name of number " + (CurrentAbilityNumber + 1);
+		document.getElementById('inputdonebutton').removeEventListener('click', note_ability_number);
+		document.getElementById('inputdonebutton').addEventListener('click', add_ability_name);
+	}
+
+	function add_ability_name() {
+		
+	}
+
+
+

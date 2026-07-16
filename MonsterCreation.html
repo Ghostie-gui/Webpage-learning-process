@@ -7,7 +7,6 @@
 <input type="button" id="startmonsterbutton" value="Create a New Monster" />
 
 <script>
-	let MonsterNumber = 0
 	const Monsterlist = [];
 	const HitPointAmounts = [];
 	const Abilities = {};
@@ -17,9 +16,18 @@
 	const DamageModifiers = {};
 
 	// Below this will be let commands for various reused counter variables.
+	let MonsterNumber = 0
 	let AbilityNumber = 0
 	let number = 0
 	let CurrentAbilityNumber = 0
+	let AbilityName = "Blank Placeholder"
+	let DiceNumber = 0
+	let DiceType = 0
+
+	// Below this are some rules.
+	const OkDiceTypes = [4, 6, 8, 10, 12, 20]
+	const yesAnswers = ["yes", "yeah", "y"];
+    const noAnswers = ["no", "n"];
 
 	// Below this is the functions, in chronological order.
 	function new_monster_name_inquiry() {
@@ -49,7 +57,7 @@
 		number = (document.getElementById('inputspace').value)
 		HitPointNumber = Number(number)
 		if (!Number.isInteger(HitPointNumber) || number.trim() === "") {
-        	document.getElementById('announcedtext').textContent = "That's not a positive integer. How can you have that many hit points?";
+        	document.getElementById('announcedtext').textContent = "That's not an integer. How can you have that many hit points?";
         	document.getElementById('inputspace').value = "";
     	}
     	else if (HitPointNumber < 1) {
@@ -78,7 +86,7 @@
 		number = (document.getElementById('inputspace').value)
 		AbilityNumber = Number(number)
 		if (!Number.isInteger(AbilityNumber) || number.trim() === "") {
-        	document.getElementById('announcedtext').textContent = "That's not a positive integer. How can you have that many abilities?";
+        	document.getElementById('announcedtext').textContent = "That's not an integer. How can you have that many abilities?";
         	document.getElementById('inputspace').value = "";
     	}
     	else if (AbilityNumber < 1) {
@@ -102,7 +110,64 @@
 	}
 
 	function add_ability_name() {
-		
+		AbilityName = (document.getElementById('inputspace').value.trim())
+		if (Abilities[MonsterNumber].includes(AbilityName) || AbilityName === ""){
+			document.getElementById('announcedtext').textContent = "That's either a blank space or a duplicate name. Try again!";
+        	document.getElementById('inputspace').value = "";
+        }
+        else {
+        	Abilities[MonsterNumber].push(AbilityName);
+        	document.getElementById('inputspace').value = "";
+        	ability_dice_amount_inquiry();
+        }
+	}
+
+	function ability_dice_amount_inquiry() {
+		document.getElementById('announcedtext').textContent = "Thank you! Now, how many dice of damage will this deal? Keep it under 30 and use 0 for a nondamaging ability.";
+		document.getElementById('inputdonebutton').removeEventListener('click', add_ability_name);
+		document.getElementById('inputdonebutton').addEventListener('click', add_ability_dice_amount);
+	}
+
+	function add_ability_dice_amount() {
+		number = (document.getElementById('inputspace').value)
+		DiceNumber = Number(number)
+		if (!Number.isInteger(DiceNumber) || number.trim() === "") {
+        	document.getElementById('announcedtext').textContent = "That's not an integer. How can you have that many dice?";
+        	document.getElementById('inputspace').value = "";
+    	}
+    	else if (DiceNumber < 0) {
+        	document.getElementById('announcedtext').textContent = "That's less than 0. How can you have negative dice? Try higher!";
+        	document.getElementById('inputspace').value = "";
+		}
+		else if (DiceNumber > 10) {
+        	document.getElementById('announcedtext').textContent = "That's too many. I can only handle up to 30.";
+      		document.getElementById('inputspace').value = "";
+		}
+		else {
+			document.getElementById('inputspace').value = "";
+			DiceAmounts[MonsterNumber].push(DiceNumber)
+			dice_type_inquiry();
+		}
+	}
+
+	function dice_type_inquiry() {
+		document.getElementById('announcedtext').textContent = "Thank you! Now, what type of die (4, 6, 8, 10, 20) will those be? Use any if you already stated that it deals no damage.";
+		document.getElementById('inputdonebutton').removeEventListener('click', add_ability_dice_amount);
+		document.getElementById('inputdonebutton').addEventListener('click', add_ability_dice_type);
+	}
+
+	function add_ability_dice_type() {
+		number = (document.getElementById('inputspace').value)
+		DiceType = Number(number)
+		if (!OkDiceTypes.includes(DiceType)) {
+			document.getElementById('announcedtext').textContent = "There is no die with that many sides. Try again!";
+        	document.getElementById('inputspace').value = "";
+        }
+        else {
+        	document.getElementById('inputspace').value = "";
+			DiceTypes[MonsterNumber].push(DiceType)
+			to_hit_inquiry();
+		}
 	}
 
 

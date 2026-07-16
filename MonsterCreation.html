@@ -23,6 +23,9 @@
 	let AbilityName = "Blank Placeholder"
 	let DiceNumber = 0
 	let DiceType = 0
+	let HitBonus = 0
+	let DamageBonus = 0
+
 
 	// Below this are some rules.
 	const OkDiceTypes = [4, 6, 8, 10, 12, 20]
@@ -43,7 +46,6 @@
 		DiceTypes[MonsterNumber] = [];
 		ToHit[MonsterNumber] = [];
 		DamageModifiers[MonsterNumber] = [];
-		MonsterNumber = MonsterNumber + 1;
 		hit_points_inquiry();
 	}
 
@@ -99,13 +101,13 @@
 		}
 		else {
 			document.getElementById('inputspace').value = "";
+			document.getElementById('inputdonebutton').removeEventListener('click', note_ability_number); //this is here instead to prevent issues when removing the listeners multiple times later
 			ability_name_inquiry();
 		}
 	}
 
 	function ability_name_inquiry() {
 		document.getElementById('announcedtext').textContent = "Thank you! Now, what will these " + AbilityNumber + " abilities be called? Input the name of number " + (CurrentAbilityNumber + 1);
-		document.getElementById('inputdonebutton').removeEventListener('click', note_ability_number);
 		document.getElementById('inputdonebutton').addEventListener('click', add_ability_name);
 	}
 
@@ -139,7 +141,7 @@
         	document.getElementById('announcedtext').textContent = "That's less than 0. How can you have negative dice? Try higher!";
         	document.getElementById('inputspace').value = "";
 		}
-		else if (DiceNumber > 10) {
+		else if (DiceNumber > 30) {
         	document.getElementById('announcedtext').textContent = "That's too many. I can only handle up to 30.";
       		document.getElementById('inputspace').value = "";
 		}
@@ -171,10 +173,65 @@
 	}
 
 	function to_hit_inquiry() {
-		document.getElementById('announcedtext').textContent = "Thank you! Now, what type of die (4, 6, 8, 10, 20) will those be? Use any if you already stated that it deals no damage.";
-		document.getElementById('inputdonebutton').removeEventListener('click', add_ability_dice_amount);
-		document.getElementById('inputdonebutton').addEventListener('click', add_ability_dice_type);
+		document.getElementById('announcedtext').textContent = "Thank you! Now, what is the to hit bonus for this ability? Use 0 if you already stated that it deals no damage.";
+		document.getElementById('inputdonebutton').removeEventListener('click', add_ability_dice_type);
+		document.getElementById('inputdonebutton').addEventListener('click', add_to_hit);
 	}
 
+	function add_to_hit() {
+		number = (document.getElementById('inputspace').value);
+		HitBonus = Number(number);
+		if (!Number.isInteger(HitBonus) || number.trim() === "") {
+        	document.getElementById('announcedtext').textContent = "That's not an integer. How can you have that bonus?";
+        	document.getElementById('inputspace').value = "";
+    	}
+		else if (HitBonus > 15) {
+        	document.getElementById('announcedtext').textContent = "That's too much. Your players and I can only handle up to 15.";
+      		document.getElementById('inputspace').value = "";
+		}
+		else {
+			document.getElementById('inputspace').value = "";
+			ToHit[MonsterNumber].push(HitBonus);
+			damage_bonus_inquiry();
+		}
+	}
+
+	function damage_bonus_inquiry() {
+		document.getElementById('announcedtext').textContent = "Thank you! Now, what is the damage bonus for this ability? Use 0 if you already stated that it deals no damage, or something else if it always deals a set amount (paired with no dice).";
+		document.getElementById('inputdonebutton').removeEventListener('click', add_to_hit);
+		document.getElementById('inputdonebutton').addEventListener('click', add_damage_bonus);
+	}
+
+	function add_damage_bonus() {
+		number = (document.getElementById('inputspace').value);
+		DamageBonus = Number(number);
+		if (!Number.isInteger(DamageBonus) || number.trim() === "") {
+        	document.getElementById('announcedtext').textContent = "That's not an integer. How can you have that bonus?";
+        	document.getElementById('inputspace').value = "";
+    	}
+		else if (DamageBonus > 100) {
+        	document.getElementById('announcedtext').textContent = "That's too much. Your players and I can only handle up to 100.";
+      		document.getElementById('inputspace').value = "";
+		}
+		else {
+			document.getElementById('inputspace').value = "";
+			DamageModifiers[MonsterNumber].push(DamageBonus);
+			is_it_enough();
+		}
+	}
+
+	function is_it_enough() {
+		CurrentAbilityNumber = CurrentAbilityNumber + 1
+		document.getElementById('inputdonebutton').removeEventListener('click', add_damage_bonus);
+		if (CurrentAbilityNumber <= AbilityNumber) {
+			ability_name_inquiry()
+		}
+		else {
+			CurrentAbilityNumber = 0
+        	document.getElementById('announcedtext').textContent = "Perfect! The monster named " + Monsterlist[MonsterNumber] + " is complete!";
+			MonsterNumber = MonsterNumber + 1;
+		}
+	}
+</script>
 
 

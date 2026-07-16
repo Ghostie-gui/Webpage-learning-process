@@ -54,8 +54,8 @@
 	}
 
 	function note_hit_points() {
-		number = (document.getElementById('inputspace').value)
-		HitPointNumber = Number(number)
+		number = (document.getElementById('inputspace').value);
+		HitPointNumber = Number(number);
 		if (!Number.isInteger(HitPointNumber) || number.trim() === "") {
         	document.getElementById('announcedtext').textContent = "That's not an integer. How can you have that many hit points?";
         	document.getElementById('inputspace').value = "";
@@ -70,7 +70,7 @@
 		}
 		else {
 			document.getElementById('inputspace').value = "";
-			HitPointAmounts.push (HitPointNumber)
+			HitPointAmounts.push (HitPointNumber);
 			ability_number_inquiry();
 		}
 	}
@@ -83,8 +83,8 @@
 	}
 
 	function note_ability_number() {
-		number = (document.getElementById('inputspace').value)
-		AbilityNumber = Number(number)
+		number = (document.getElementById('inputspace').value);
+		AbilityNumber = Number(number);
 		if (!Number.isInteger(AbilityNumber) || number.trim() === "") {
         	document.getElementById('announcedtext').textContent = "That's not an integer. How can you have that many abilities?";
         	document.getElementById('inputspace').value = "";
@@ -110,7 +110,7 @@
 	}
 
 	function add_ability_name() {
-		AbilityName = (document.getElementById('inputspace').value.trim())
+		AbilityName = (document.getElementById('inputspace').value.trim());
 		if (Abilities[MonsterNumber].includes(AbilityName) || AbilityName === ""){
 			document.getElementById('announcedtext').textContent = "That's either a blank space or a duplicate name. Try again!";
         	document.getElementById('inputspace').value = "";
@@ -129,8 +129,8 @@
 	}
 
 	function add_ability_dice_amount() {
-		number = (document.getElementById('inputspace').value)
-		DiceNumber = Number(number)
+		number = (document.getElementById('inputspace').value);
+		DiceNumber = Number(number);
 		if (!Number.isInteger(DiceNumber) || number.trim() === "") {
         	document.getElementById('announcedtext').textContent = "That's not an integer. How can you have that many dice?";
         	document.getElementById('inputspace').value = "";
@@ -145,7 +145,7 @@
 		}
 		else {
 			document.getElementById('inputspace').value = "";
-			DiceAmounts[MonsterNumber].push(DiceNumber)
+			DiceAmounts[MonsterNumber].push(DiceNumber);
 			dice_type_inquiry();
 		}
 	}
@@ -157,17 +157,23 @@
 	}
 
 	function add_ability_dice_type() {
-		number = (document.getElementById('inputspace').value)
-		DiceType = Number(number)
+		number = (document.getElementById('inputspace').value);
+		DiceType = Number(number);
 		if (!OkDiceTypes.includes(DiceType)) {
 			document.getElementById('announcedtext').textContent = "There is no die with that many sides. Try again!";
         	document.getElementById('inputspace').value = "";
         }
         else {
         	document.getElementById('inputspace').value = "";
-			DiceTypes[MonsterNumber].push(DiceType)
+			DiceTypes[MonsterNumber].push(DiceType);
 			to_hit_inquiry();
 		}
+	}
+
+	function to_hit_inquiry() {
+		document.getElementById('announcedtext').textContent = "Thank you! Now, what type of die (4, 6, 8, 10, 20) will those be? Use any if you already stated that it deals no damage.";
+		document.getElementById('inputdonebutton').removeEventListener('click', add_ability_dice_amount);
+		document.getElementById('inputdonebutton').addEventListener('click', add_ability_dice_type);
 	}
 
 

@@ -14,6 +14,49 @@
 <!-- This is where monster attacks are noted -->
 
 
+<script> //crucial functions
+	const yesAnswers = ["yes", "yeah", "y"];
+    const noAnswers = ["no", "n"];
+
+    let min = 0
+    let max = 0
+    let ToBePrintedQuestion = "Blank Placeholder";
+ 	let VariableName = "Blank Placeholder";
+
+
+	function random(min, max) {
+	  min = Math.ceil(min);
+	  max = Math.floor(max);
+	  return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
+
+ 	function check_yes_or_no_answers() {
+ 		VariableName = document.getElementById('inputspace').value.toLowerCase();
+
+ 		const yesAnswers = ["yes", "yeah", "y"];
+    	const noAnswers = ["no", "n"];
+
+ 		if (yesAnswers.includes(VariableName)) {
+ 			document.getElementById('announcedtext').textContent = "You said yes."; 
+        	return true; 
+    	} 
+    	else if (noAnswers.includes(VariableName)) {
+    		document.getElementById('announcedtext').textContent = "You said no."; 
+        	return false;
+        }
+        else {
+		document.getElementById('announcedtext').textContent = "Please enter a valid answer.";
+		}
+		document.getElementById('inputdonebutton').removeEventListener('click', check_yes_or_no_answers);
+	}
+
+ 	function yes_or_no(ToBePrintedQuestion) {
+		document.getElementById('announcedtext').textContent = ToBePrintedQuestion;
+		document.getElementById('inputdonebutton').addEventListener('click', check_yes_or_no_answers);
+	}
+	
+</script>
+
 <script> // This one is the creation system part ok?
 	const Monsterlist = [];
 	const HitPointAmounts = [];
@@ -37,8 +80,6 @@
 
 	// Below this are some rules.
 	const OkDiceTypes = [4, 6, 8, 10, 12, 20];
-	const yesAnswers = ["yes", "yeah", "y"];
-    const noAnswers = ["no", "n"];
 
 	// Below this is the functions, in chronological order.
 	function new_monster_name_inquiry() {
@@ -55,12 +96,12 @@
 		ToHit[MonsterNumber] = [];
 		DamageModifiers[MonsterNumber] = [];
 		MonsterBattleQuantities.push (0);
+		document.getElementById('inputdonebutton').removeEventListener('click', add_monster_name);
 		hit_points_inquiry();
 	}
 
 	function hit_points_inquiry() {
 		document.getElementById('announcedtext').textContent = "Thank you! Now, how many hit points will it have? Please keep it under 500.";
-		document.getElementById('inputdonebutton').removeEventListener('click', add_monster_name);
 		document.getElementById('inputdonebutton').addEventListener('click', note_hit_points);
 	}
 
@@ -82,6 +123,7 @@
 		else {
 			document.getElementById('inputspace').value = "";
 			HitPointAmounts.push (HitPointNumber);
+			document.getElementById('inputdonebutton').removeEventListener('click', note_hit_points);
 			ability_number_inquiry();
 		}
 	}
@@ -89,7 +131,6 @@
 
 	function ability_number_inquiry() {
 		document.getElementById('announcedtext').textContent = "Thank you! Now, how many abilities will it have? Please keep it under ten.";
-		document.getElementById('inputdonebutton').removeEventListener('click', note_hit_points);
 		document.getElementById('inputdonebutton').addEventListener('click', note_ability_number);
 	}
 
@@ -110,7 +151,7 @@
 		}
 		else {
 			document.getElementById('inputspace').value = "";
-			document.getElementById('inputdonebutton').removeEventListener('click', note_ability_number); //this is here instead to prevent issues when removing the listeners multiple times later
+			document.getElementById('inputdonebutton').removeEventListener('click', note_ability_number);
 			ability_name_inquiry();
 		}
 	}
@@ -129,13 +170,13 @@
         else {
         	Abilities[MonsterNumber].push(AbilityName);
         	document.getElementById('inputspace').value = "";
+        	document.getElementById('inputdonebutton').removeEventListener('click', add_ability_name);
         	ability_dice_amount_inquiry();
         }
 	}
 
 	function ability_dice_amount_inquiry() {
 		document.getElementById('announcedtext').textContent = "Thank you! Now, how many dice of damage will this deal? Keep it under 30 and use 0 for a nondamaging ability.";
-		document.getElementById('inputdonebutton').removeEventListener('click', add_ability_name);
 		document.getElementById('inputdonebutton').addEventListener('click', add_ability_dice_amount);
 	}
 
@@ -157,13 +198,13 @@
 		else {
 			document.getElementById('inputspace').value = "";
 			DiceAmounts[MonsterNumber].push(DiceNumber);
+			document.getElementById('inputdonebutton').removeEventListener('click', add_ability_dice_amount);
 			dice_type_inquiry();
 		}
 	}
 
 	function dice_type_inquiry() {
 		document.getElementById('announcedtext').textContent = "Thank you! Now, what type of die (4, 6, 8, 10, 20) will those be? Use any if you already stated that it deals no damage.";
-		document.getElementById('inputdonebutton').removeEventListener('click', add_ability_dice_amount);
 		document.getElementById('inputdonebutton').addEventListener('click', add_ability_dice_type);
 	}
 
@@ -177,13 +218,13 @@
         else {
         	document.getElementById('inputspace').value = "";
 			DiceTypes[MonsterNumber].push(DiceType);
+			document.getElementById('inputdonebutton').removeEventListener('click', add_ability_dice_type);
 			to_hit_inquiry();
 		}
 	}
 
 	function to_hit_inquiry() {
 		document.getElementById('announcedtext').textContent = "Thank you! Now, what is the to hit bonus for this ability? Use 0 if you already stated that it deals no damage.";
-		document.getElementById('inputdonebutton').removeEventListener('click', add_ability_dice_type);
 		document.getElementById('inputdonebutton').addEventListener('click', add_to_hit);
 	}
 
@@ -201,13 +242,13 @@
 		else {
 			document.getElementById('inputspace').value = "";
 			ToHit[MonsterNumber].push(HitBonus);
+			document.getElementById('inputdonebutton').removeEventListener('click', add_to_hit);
 			damage_bonus_inquiry();
 		}
 	}
 
 	function damage_bonus_inquiry() {
 		document.getElementById('announcedtext').textContent = "Thank you! Now, what is the damage bonus for this ability? Use 0 if you already stated that it deals no damage, or something else if it always deals a set amount (paired with no dice).";
-		document.getElementById('inputdonebutton').removeEventListener('click', add_to_hit);
 		document.getElementById('inputdonebutton').addEventListener('click', add_damage_bonus);
 	}
 
@@ -225,13 +266,13 @@
 		else {
 			document.getElementById('inputspace').value = "";
 			DamageModifiers[MonsterNumber].push(DamageBonus);
+			document.getElementById('inputdonebutton').removeEventListener('click', add_damage_bonus);
 			is_it_enough();
 		}
 	}
 
 	function is_it_enough() {
 		CurrentAbilityNumber = CurrentAbilityNumber + 1
-		document.getElementById('inputdonebutton').removeEventListener('click', add_damage_bonus);
 		if (CurrentAbilityNumber <= AbilityNumber) {
 			ability_name_inquiry()
 		}
@@ -256,6 +297,9 @@
 	let listText = ""
 	let name = ""
 	let quantity = 0
+	let attackText = ""
+	let Abilityusednumbers = 0
+	let variablename = 0
 
 	document.getElementById('startbattlebutton').addEventListener('click', battle_sequence);
 
@@ -280,7 +324,7 @@
 
 	function round_of_attacks() {
 		for (let e = 0; e < Monsterlist.length; e++) {
-			ThisMonsterAmount = MonsterBattleQuantities[e]
+			ThisMonsterAmount = MonsterBattleQuantities(e)
 			for (let f = 0; f < ThisMonsterAmount; f++) {
 				CurrentMonsterName = Monsterlist(e) + str(f + 1)
 				FullMonsterList.push(CurrentMonsterName)
@@ -288,6 +332,14 @@
 			}
 		}
 		TotalMonsterAmount = FullMonsterList.length
+
+		for (let h = 0; h < Monsterlist.length; h++) {
+			attackText = attackText + "Attacks of the " + MonsterBattleQuantities(h) + Monsterlist(h) + "s" //declare the attacking group
+			for (let j = 0; j < ThisMonsterAmount; j++) {
+				variablename = Abilities[j].length //get the number of abilities
+
+			}
+		}
 
 	}
 
@@ -298,7 +350,11 @@
 
     	const monsterCounter = document.createElement("p"); //make a paragraph
     	combatZone.appendChild(monsterCounter); //put it in the zone
-    	const monsterCounter.id = "MonsterTally" //give it its id    	
+    	const monsterCounter.id = "MonsterTally" //give it its id  
+
+    	const attacksCounter = document.createElement("p"); //make a paragraph
+    	combatAttackZone.appendChild(monsterCounter); //put it in the zone
+    	const attacksCounter.id = "AttacksDisplay" //id it
 
     	for (let i = 0; i < Monsterlist.length; i++) { //ready a loop, set i to 0, go until it reaches the length, add 1 each time
     		const monsterbutton = document.createElement("input");

@@ -5,8 +5,16 @@
 <input type="button" id="inputdonebutton" value="Done Inputting!" />
 <!-- the above is an input space and button, the button should trigger various things-->
 <input type="button" id="startmonsterbutton" value="Create a New Monster" />
+<!-- The above button triggers the new monster creation sequence -->
+<input type="button" id="startbattlebutton" value="Start Battle!" />
+<!-- That button starts combat! -->
+<div id="combatZone"></div>
+<!-- This is a zone where the combat stuff will go eventually -->
+<div id="combatAttackZone"></div>
+<!-- This is where monster attacks are noted -->
 
-<script>
+
+<script> // This one is the creation system part ok?
 	const Monsterlist = [];
 	const HitPointAmounts = [];
 	const Abilities = {};
@@ -16,19 +24,19 @@
 	const DamageModifiers = {};
 
 	// Below this will be let commands for various reused counter variables.
-	let MonsterNumber = 0
-	let AbilityNumber = 0
-	let number = 0
-	let CurrentAbilityNumber = 0
-	let AbilityName = "Blank Placeholder"
-	let DiceNumber = 0
-	let DiceType = 0
-	let HitBonus = 0
-	let DamageBonus = 0
-
+	let MonsterNumber = 0;
+	let AbilityNumber = 0;
+	let number = 0;
+	let CurrentAbilityNumber = 0;
+	let AbilityName = "Blank Placeholder";
+	let DiceNumber = 0;
+	let DiceType = 0;
+	let HitBonus = 0;
+	let DamageBonus = 0;
+	let MonsterChosenId = 0;
 
 	// Below this are some rules.
-	const OkDiceTypes = [4, 6, 8, 10, 12, 20]
+	const OkDiceTypes = [4, 6, 8, 10, 12, 20];
 	const yesAnswers = ["yes", "yeah", "y"];
     const noAnswers = ["no", "n"];
 
@@ -46,6 +54,7 @@
 		DiceTypes[MonsterNumber] = [];
 		ToHit[MonsterNumber] = [];
 		DamageModifiers[MonsterNumber] = [];
+		MonsterBattleQuantities.push (0);
 		hit_points_inquiry();
 	}
 
@@ -232,6 +241,81 @@
 			MonsterNumber = MonsterNumber + 1;
 		}
 	}
+</script>
+
+<script>
+	const MonsterBattleQuantities = [];
+	const FullMonsterList = [];
+	const CurrentHitpointAmounts = [];
+	const MonstersDamageTakens = [];
+
+	let ThisMonsterAmount = 0
+	let CurrentMonsterName = "Blank Placeholder"
+	let TotalMonsterAmount = 0
+	let RoundCount = 1
+	let listText = ""
+	let name = ""
+	let quantity = 0
+
+	document.getElementById('startbattlebutton').addEventListener('click', battle_sequence);
+
+	function monster_added() { //this function adds 1 to the monster's spot in the quantities list
+		MonsterChosenId = this.monsterIndex
+		MonsterBattleQuantities[MonsterChosenId] = MonsterBattleQuantities[MonsterChosenId] + 1
+		refresh_monster_list()
+	}
+
+	function refresh_monster_list() {
+		listText = "<strong>Active Monsters in Battle:</strong><br>"; //set the heading
+			for (let g = 0; g < Monsterlist.length, g++) {
+				name = Monsterlist(g);
+				quantity = MonsterBattleQuantities(g);
+
+				if (quantity > 0) {
+					listText = listText + name + " x" + quantity + "<br>";
+				}
+			}
+		document.getElementById(MonsterTally).innerHTML = listText;
+	}
+
+	function round_of_attacks() {
+		for (let e = 0; e < Monsterlist.length; e++) {
+			ThisMonsterAmount = MonsterBattleQuantities[e]
+			for (let f = 0; f < ThisMonsterAmount; f++) {
+				CurrentMonsterName = Monsterlist(e) + str(f + 1)
+				FullMonsterList.push(CurrentMonsterName)
+				CurrentHitpointAmounts.push(HitPointAmounts(e))
+			}
+		}
+		TotalMonsterAmount = FullMonsterList.length
+
+	}
+
+	function battle_sequence() {
+    	document.getElementById('announcedtext').textContent = "Let's prep for combat! A bunch of buttons will appear. Just click them to indicate a new monster!";
+    	document.getElementById("combatZone").innerHTML = ""; //empty the zone
+    	document.getElementById("combatAttackZone").innerHTML = ""; //empty the zone
+
+    	const monsterCounter = document.createElement("p"); //make a paragraph
+    	combatZone.appendChild(monsterCounter); //put it in the zone
+    	const monsterCounter.id = "MonsterTally" //give it its id    	
+
+    	for (let i = 0; i < Monsterlist.length; i++) { //ready a loop, set i to 0, go until it reaches the length, add 1 each time
+    		const monsterbutton = document.createElement("input");
+    		monsterButton.type = "button";
+			monsterButton.id = "monster" + i + "button"
+    		monsterButton.value = Monsterlist[i];
+    		monsterButton.monsterIndex = i;
+    		monsterButton.addEventListener('click', monster_added);
+    		//that loop sets up a button
+    	const roundstartbutton = document.createElement("input");
+		roundstartbutton.type = "button";
+		roundstartbutton.id = "StartsARound";
+    	roundstartbutton.value = "Begin a round of attacks!"; 
+    	document.getElementById('StartsARound').addEventListener('click', round_of_attacks); //setting up a button that starts a round
+
+
+    }
 </script>
 
 

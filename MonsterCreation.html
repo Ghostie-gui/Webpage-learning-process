@@ -65,6 +65,7 @@
 	const DiceTypes = {};
 	const ToHit = {};
 	const DamageModifiers = {};
+	const MonsterBattleQuantities = []
 
 	// Below this will be let commands for various reused counter variables.
 	let MonsterNumber = 0;
@@ -98,7 +99,7 @@
 		DiceTypes[MonsterNumber] = [];
 		ToHit[MonsterNumber] = [];
 		DamageModifiers[MonsterNumber] = [];
-		MonsterBattleQuantities.push (0);
+		MonsterBattleQuantities.push(0);
 		document.getElementById('inputdonebutton').removeEventListener('click', add_monster_name);
 		hit_points_inquiry();
 	}
@@ -289,7 +290,6 @@
 </script>
 
 <script>
-	const MonsterBattleQuantities = [];
 	const FullMonsterList = [];
 	const CurrentHitpointAmounts = [];
 	const MonstersDamageTakens = [];

@@ -81,8 +81,11 @@
 	// Below this are some rules.
 	const OkDiceTypes = [4, 6, 8, 10, 12, 20];
 
+	document.getElementById('startmonsterbutton').addEventListener('click', new_monster_name_inquiry);
+
 	// Below this is the functions, in chronological order.
 	function new_monster_name_inquiry() {
+		document.getElementById('startmonsterbutton').removeEventListener('click', new_monster_name_inquiry);
 		document.getElementById('announcedtext').textContent = "What will be the name of your monster?";
 		document.getElementById('inputdonebutton').addEventListener('click', add_monster_name);
 	}
@@ -280,6 +283,7 @@
 			CurrentAbilityNumber = 0
         	document.getElementById('announcedtext').textContent = "Perfect! The monster named " + Monsterlist[MonsterNumber] + " is complete!";
 			MonsterNumber = MonsterNumber + 1;
+			document.getElementById('startmonsterbutton').addEventListener('click', new_monster_name_inquiry);
 		}
 	}
 </script>
@@ -377,7 +381,7 @@
 	}
 
 	function battle_sequence() {
-    	document.getElementById('announcedtext').textContent = "Let's prep for combat! A bunch of buttons will appear. Just click them to indicate a new monster!";
+    	document.getElementById('announcedtext').textContent = "Let's prep for combat! A bunch of buttons will appear. Just click them to indicate a new monster! You can also add a new one anytime!";
     	document.getElementById("combatZone").innerHTML = ""; //empty the zone
     	document.getElementById("combatAttackZone").innerHTML = ""; //empty the zone
 

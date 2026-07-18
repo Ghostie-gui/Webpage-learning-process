@@ -1,5 +1,6 @@
 <p id="announcedtext"> This is where announcements will come, very soon! </p> <br> 
 <!-- the above is an editable text space where various announcements will go, usually what used to be the print command will end up here -->
+<p id="debugtext"> This is where debugging stuff ends up :) </p> <br> 
 <p id="monsterinfolist"> This is where info on your monsters will be! </p> <br> 
 <input type="text" id="inputspace" /> 
 <input type="button" id="inputdonebutton" value="Done Inputting!" />
@@ -276,9 +277,10 @@
 	}
 
 	function is_it_enough() {
-		CurrentAbilityNumber = CurrentAbilityNumber + 1
-		if (CurrentAbilityNumber <= AbilityNumber) {
-			ability_name_inquiry()
+		CurrentAbilityNumber = CurrentAbilityNumber + 1;
+		document.getElementById('debugtext').textContent = CurrentAbilityNumber
+		if (CurrentAbilityNumber < AbilityNumber) {
+			ability_name_inquiry();
 		}
 		else {
 			CurrentAbilityNumber = 0

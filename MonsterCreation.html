@@ -290,23 +290,32 @@
 	const CurrentHitpointAmounts = [];
 	const MonstersDamageTakens = [];
 
-	let ThisMonsterAmount = 0
-	let CurrentMonsterName = "Blank Placeholder"
-	let TotalMonsterAmount = 0
-	let RoundCount = 1
-	let listText = ""
-	let name = ""
-	let quantity = 0
-	let attackText = ""
-	let Abilityusednumbers = 0
-	let variablename = 0
+	let ThisMonsterAmount = 0;
+	let CurrentMonsterName = "Blank Placeholder";
+	let TotalMonsterAmount = 0;
+	let RoundCount = 1;
+	let listText = "";
+	let name = "";
+	let quantity = 0;
+	let attackText = "";
+	let Abilityusednumbers = 0;
+	let variablename = 0;
+	let baseattackroll = 0;
+	let attackroll = 0;
+	let basedamage = 0;
+	let anothervariablename = 0;
+	let damage = 0;
+
+
+	let critHit = false;
+	let critFail = false;
 
 	document.getElementById('startbattlebutton').addEventListener('click', battle_sequence);
 
 	function monster_added() { //this function adds 1 to the monster's spot in the quantities list
 		MonsterChosenId = this.monsterIndex
-		MonsterBattleQuantities[MonsterChosenId] = MonsterBattleQuantities[MonsterChosenId] + 1
-		refresh_monster_list()
+		MonsterBattleQuantities[MonsterChosenId] = MonsterBattleQuantities[MonsterChosenId] + 1;
+		refresh_monster_list();
 	}
 
 	function refresh_monster_list() {
@@ -319,28 +328,52 @@
 					listText = listText + name + " x" + quantity + "<br>";
 				}
 			}
-		document.getElementById(MonsterTally).innerHTML = listText;
+		document.getElementById('MonsterTally').innerHTML = listText;
 	}
 
 	function round_of_attacks() {
 		for (let e = 0; e < Monsterlist.length; e++) {
-			ThisMonsterAmount = MonsterBattleQuantities(e)
+			ThisMonsterAmount = MonsterBattleQuantities(e);
 			for (let f = 0; f < ThisMonsterAmount; f++) {
-				CurrentMonsterName = Monsterlist(e) + str(f + 1)
-				FullMonsterList.push(CurrentMonsterName)
-				CurrentHitpointAmounts.push(HitPointAmounts(e))
+				CurrentMonsterName = Monsterlist(e) + str(f + 1);
+				FullMonsterList.push(CurrentMonsterName);
+				CurrentHitpointAmounts.push(HitPointAmounts(e));
 			}
 		}
-		TotalMonsterAmount = FullMonsterList.length
+		TotalMonsterAmount = FullMonsterList.length;
 
 		for (let h = 0; h < Monsterlist.length; h++) {
-			attackText = attackText + "Attacks of the " + MonsterBattleQuantities(h) + Monsterlist(h) + "s" //declare the attacking group
+			attackText = attackText + "Attacks of the " + MonsterBattleQuantities(h) + Monsterlist(h) + "s" + "<br>"; //declare the attacking group
 			for (let j = 0; j < ThisMonsterAmount; j++) {
-				variablename = Abilities[j].length //get the number of abilities
-
+				variablename = Abilities[h].length //get the number of abilities
+				Abilityusednumbers = random(0, variablename - 1);
+				baseattackroll = random(1, 20);
+				critHit = false;
+				critFail = false;
+				if (baseattackroll === 20) {
+					critHit = true;
+				}
+				if (baseattackroll === 1) {
+					critFail = true;
+				}
+				attackroll = baseattackroll + ToHit[h][Abilityusednumbers];
+				basedamage = 0;
+				anothervariablename = DiceTypes[h][Abilityusednumbers];
+				for (let k = 0; k < DiceAmounts[h][Abilityusednumbers]; k++) {
+					basedamage = basedamage + random(1, anothervariablename);
+				}
+				damage = basedamage + DamageModifiers[h][Abilityusednumbers];
+				attackText = attackText + Monsterlist(h) + (j + 1) + " attacked and dealt " + damage + " damage, with a to hit roll of " + attackroll + "."
+				if (critHit = true) {
+					attackText = attackText + " This was a crit hit."
+				}
+				if (critFail = true) {
+					attackText = attackText + " This was a crit miss."
+				}
+				attackText = attackText + "<br>"
 			}
 		}
-
+		document.getElementById('AttacksDisplay').innerHTML = attackText;
 	}
 
 	function battle_sequence() {

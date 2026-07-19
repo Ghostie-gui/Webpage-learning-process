@@ -1,3 +1,4 @@
+<!DOCTYPE html> <!-- That's to help the browser -->
 <p id="announcedtext"> This is where announcements will come, very soon! </p> <br> 
 <!-- the above is an editable text space where various announcements will go, usually what used to be the print command will end up here -->
 <p id="debugtext"> This is where debugging stuff ends up :) </p> <br> 
@@ -319,14 +320,14 @@
 	document.getElementById('startbattlebutton').addEventListener('click', battle_sequence);
 
 	function monster_added() { //this function adds 1 to the monster's spot in the quantities list
-		MonsterChosenId = this.monsterIndex
+		MonsterChosenId = this.monsterIndex;
 		MonsterBattleQuantities[MonsterChosenId] = MonsterBattleQuantities[MonsterChosenId] + 1;
 		refresh_monster_list();
 	}
 
 	function refresh_monster_list() {
 		listText = "<strong>Active Monsters in Battle:</strong><br>"; //set the heading
-			for (let g = 0; g < Monsterlist.length, g++) {
+			for (let g = 0; g < Monsterlist.length; g++) {
 				name = Monsterlist(g);
 				quantity = MonsterBattleQuantities(g);
 
@@ -351,7 +352,7 @@
 		for (let h = 0; h < Monsterlist.length; h++) {
 			attackText = attackText + "Attacks of the " + MonsterBattleQuantities(h) + Monsterlist(h) + "s" + "<br>"; //declare the attacking group
 			for (let j = 0; j < ThisMonsterAmount; j++) {
-				variablename = Abilities[h].length //get the number of abilities
+				variablename = Abilities[h].length; //get the number of abilities
 				Abilityusednumbers = random(0, variablename - 1);
 				baseattackroll = random(1, 20);
 				critHit = false;
@@ -369,14 +370,14 @@
 					basedamage = basedamage + random(1, anothervariablename);
 				}
 				damage = basedamage + DamageModifiers[h][Abilityusednumbers];
-				attackText = attackText + Monsterlist(h) + (j + 1) + " attacked and dealt " + damage + " damage, with a to hit roll of " + attackroll + "."
+				attackText = attackText + Monsterlist(h) + (j + 1) + " attacked and dealt " + damage + " damage, with a to hit roll of " + attackroll + ".";
 				if (critHit = true) {
-					attackText = attackText + " This was a crit hit."
+					attackText = attackText + " This was a crit hit.";
 				}
 				if (critFail = true) {
-					attackText = attackText + " This was a crit miss."
+					attackText = attackText + " This was a crit miss.";
 				}
-				attackText = attackText + "<br>"
+				attackText = attackText + "<br>";
 			}
 		}
 		document.getElementById('AttacksDisplay').innerHTML = attackText;
@@ -398,7 +399,7 @@
     	for (let i = 0; i < Monsterlist.length; i++) { //ready a loop, set i to 0, go until it reaches the length, add 1 each time
     		const monsterbutton = document.createElement("input");
     		monsterButton.type = "button";
-			monsterButton.id = "monster" + i + "button"
+			monsterButton.id = "monster" + i + "button";
     		monsterButton.value = Monsterlist[i];
     		monsterButton.monsterIndex = i;
     		monsterButton.addEventListener('click', monster_added);

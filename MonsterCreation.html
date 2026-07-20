@@ -319,6 +319,14 @@
 
 	document.getElementById('startbattlebutton').addEventListener('click', battle_sequence);
 
+	function combat_over(){
+		document.getElementById('startbattlebutton').addEventListener('click', battle_sequence);
+		document.getElementById('startmonsterbutton').addEventListener('click', new_monster_name_inquiry);
+		document.getElementById("combatZone").innerHTML = ""; //empty the zone
+    	document.getElementById("combatAttackZone").innerHTML = ""; //empty the zone
+    	document.getElementById('announcedtext').textContent = "Combat over!";
+	}
+
 	function monster_added() { //this function adds 1 to the monster's spot in the quantities list
 		MonsterChosenId = this.monsterIndex;
 		MonsterBattleQuantities[MonsterChosenId] = MonsterBattleQuantities[MonsterChosenId] + 1;
@@ -384,17 +392,19 @@
 	}
 
 	function battle_sequence() {
+		document.getElementById('startbattlebutton').removeEventListener('click', battle_sequence);
+		document.getElementById('startmonsterbutton').removeEventListener('click', new_monster_name_inquiry);
     	document.getElementById('announcedtext').textContent = "Let's prep for combat! A bunch of buttons will appear. Just click them to indicate a new monster! You can also add a new one anytime!";
     	document.getElementById("combatZone").innerHTML = ""; //empty the zone
     	document.getElementById("combatAttackZone").innerHTML = ""; //empty the zone
 
     	const monsterCounter = document.createElement("p"); //make a paragraph
     	combatZone.appendChild(monsterCounter); //put it in the zone
-    	const monsterCounter.id = "MonsterTally" //give it its id  
+    	monsterCounter.id = "MonsterTally"; //give it its id  
 
     	const attacksCounter = document.createElement("p"); //make a paragraph
     	combatAttackZone.appendChild(monsterCounter); //put it in the zone
-    	const attacksCounter.id = "AttacksDisplay" //id it
+    	attacksCounter.id = "AttacksDisplay"; //id it
 
     	for (let i = 0; i < Monsterlist.length; i++) { //ready a loop, set i to 0, go until it reaches the length, add 1 each time
     		const monsterbutton = document.createElement("input");
@@ -402,16 +412,24 @@
 			monsterButton.id = "monster" + i + "button";
     		monsterButton.value = Monsterlist[i];
     		monsterButton.monsterIndex = i;
+    		combatZone.appendChild(monsterButton); //put it in the zone
     		monsterButton.addEventListener('click', monster_added);
     		//that loop sets up a button
+    	}
     	const roundstartbutton = document.createElement("input");
 		roundstartbutton.type = "button";
 		roundstartbutton.id = "StartsARound";
     	roundstartbutton.value = "Begin a round of attacks!"; 
+    	combatZone.appendChild(roundstartbutton)
     	document.getElementById('StartsARound').addEventListener('click', round_of_attacks); //setting up a button that starts a round
 
-
-    }
+    	const combatendbutton = document.createElement("input");
+		combatendbutton.type = "button";
+		combatendbutton.id = "EndCombat";
+    	combatendbutton.value = "End combat mode!"; 
+    	combatZone.appendChild(combatendbutton)
+    	document.getElementById('EndCombat').addEventListener('click', combat_over); //setting up a button that ends battle
+	}
 </script>
 
 

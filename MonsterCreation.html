@@ -35,9 +35,6 @@
  	function check_yes_or_no_answers() {
  		VariableName = document.getElementById('inputspace').value.toLowerCase();
 
- 		const yesAnswers = ["yes", "yeah", "y"];
-    	const noAnswers = ["no", "n"];
-
  		if (yesAnswers.includes(VariableName)) {
  			document.getElementById('announcedtext').textContent = "You said yes."; 
         	return true; 
@@ -72,6 +69,7 @@
 	// Below this will be let commands for various reused counter variables.
 	let MonsterNumber = 0;
 	let AbilityNumber = 0;
+	let HitPointNumber = 0;
 	let number = 0;
 	let CurrentAbilityNumber = 0;
 	let AbilityName = "Blank Placeholder";
@@ -194,7 +192,7 @@
         	document.getElementById('inputspace').value = "";
     	}
     	else if (DiceNumber < 0) {
-        	document.getElementById('announcedtext').textContent = "That's less than 0. How can you have negative dice? Try higher!";
+        	document.getElementById('announcedtext').textContent = "That's less than 0. How can you have that many dice? Try higher!";
         	document.getElementById('inputspace').value = "";
 		}
 		else if (DiceNumber > 30) {
@@ -210,7 +208,7 @@
 	}
 
 	function dice_type_inquiry() {
-		document.getElementById('announcedtext').textContent = "Thank you! Now, what type of die (4, 6, 8, 10, 20) will those be? Use any if you already stated that it deals no damage.";
+		document.getElementById('announcedtext').textContent = "Thank you! Now, what type of die (4, 6, 8, 10, 12, 20) will those be? Use any if you already stated that it deals no damage.";
 		document.getElementById('inputdonebutton').addEventListener('click', add_ability_dice_type);
 	}
 
@@ -330,14 +328,17 @@
 	function monster_added() { //this function adds 1 to the monster's spot in the quantities list
 		MonsterChosenId = this.monsterIndex;
 		MonsterBattleQuantities[MonsterChosenId] = MonsterBattleQuantities[MonsterChosenId] + 1;
+		CurrentMonsterName = Monsterlist[MonsterChosenId] + MonsterBattleQuantities[MonsterChosenId];
+		FullMonsterList.push(CurrentMonsterName); //change this to be at the right spot
+		CurrentHitpointAmounts.push(HitPointAmounts[MonsterChosenId]);
 		refresh_monster_list();
 	}
 
 	function refresh_monster_list() {
 		listText = "<strong>Active Monsters in Battle:</strong><br>"; //set the heading
 			for (let g = 0; g < Monsterlist.length; g++) {
-				name = Monsterlist(g);
-				quantity = MonsterBattleQuantities(g);
+				name = Monsterlist[g];
+				quantity = MonsterBattleQuantities[g];
 
 				if (quantity > 0) {
 					listText = listText + name + " x" + quantity + "<br>";
@@ -347,18 +348,12 @@
 	}
 
 	function round_of_attacks() {
-		for (let e = 0; e < Monsterlist.length; e++) {
-			ThisMonsterAmount = MonsterBattleQuantities(e);
-			for (let f = 0; f < ThisMonsterAmount; f++) {
-				CurrentMonsterName = Monsterlist(e) + str(f + 1);
-				FullMonsterList.push(CurrentMonsterName);
-				CurrentHitpointAmounts.push(HitPointAmounts(e));
-			}
-		}
+		attackText = "";
 		TotalMonsterAmount = FullMonsterList.length;
 
 		for (let h = 0; h < Monsterlist.length; h++) {
-			attackText = attackText + "Attacks of the " + MonsterBattleQuantities(h) + Monsterlist(h) + "s" + "<br>"; //declare the attacking group
+			attackText = attackText + "Attacks of the " + MonsterBattleQuantities[h] + Monsterlist[h] + "s" + "<br>"; //declare the attacking group
+			ThisMonsterAmount = MonsterBattleQuantities[h];
 			for (let j = 0; j < ThisMonsterAmount; j++) {
 				variablename = Abilities[h].length; //get the number of abilities
 				Abilityusednumbers = random(0, variablename - 1);
@@ -378,11 +373,11 @@
 					basedamage = basedamage + random(1, anothervariablename);
 				}
 				damage = basedamage + DamageModifiers[h][Abilityusednumbers];
-				attackText = attackText + Monsterlist(h) + (j + 1) + " attacked and dealt " + damage + " damage, with a to hit roll of " + attackroll + ".";
-				if (critHit = true) {
+				attackText = attackText + Monsterlist[h] + (j + 1) + " attacked and dealt " + damage + " damage, with a to hit roll of " + attackroll + ".";
+				if (critHit === true) {
 					attackText = attackText + " This was a crit hit.";
 				}
-				if (critFail = true) {
+				if (critFail === true) {
 					attackText = attackText + " This was a crit miss.";
 				}
 				attackText = attackText + "<br>";
@@ -403,11 +398,11 @@
     	monsterCounter.id = "MonsterTally"; //give it its id  
 
     	const attacksCounter = document.createElement("p"); //make a paragraph
-    	combatAttackZone.appendChild(monsterCounter); //put it in the zone
+    	combatAttackZone.appendChild(attacksCounter); //put it in the zone
     	attacksCounter.id = "AttacksDisplay"; //id it
 
     	for (let i = 0; i < Monsterlist.length; i++) { //ready a loop, set i to 0, go until it reaches the length, add 1 each time
-    		const monsterbutton = document.createElement("input");
+    		const monsterButton = document.createElement("input");
     		monsterButton.type = "button";
 			monsterButton.id = "monster" + i + "button";
     		monsterButton.value = Monsterlist[i];

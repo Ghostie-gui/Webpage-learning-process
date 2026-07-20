@@ -20,23 +20,18 @@
 	const yesAnswers = ["yes", "yeah", "y"];
     const noAnswers = ["no", "n"];
 
-    let min = 0
-    let max = 0
-    let ToBePrintedQuestion = "Blank Placeholder";
- 	let VariableName = "Blank Placeholder";
-
  	const inputText = document.getElementById('inputspace')
  	const announcedText = document.getElementById('announcedtext')
  	const inputButton = document.getElementById('inputdonebutton')
 
 	function random(min, max) {
-	  min = Math.ceil(min);
-	  max = Math.floor(max);
-	  return Math.floor(Math.random() * (max - min + 1)) + min;
+	  const low = Math.ceil(min);
+	  const high = Math.floor(max);
+	  return Math.floor(Math.random() * (high - low + 1)) + low;
 	}
 
  	function check_yes_or_no_answers() {
- 		VariableName = inputText.value.toLowerCase();
+ 		const VariableName = inputText.value.toLowerCase();
 
  		if (yesAnswers.includes(VariableName)) {
  			announcedText.textContent = "You said yes."; 
@@ -59,7 +54,7 @@
 
 	function check_answer(min, max, text) {
 			number = (inputText.value);
-			value = Number(number);
+			const value = Number(number);
 			if (!Number.isInteger(value) || number.trim() === "") {
 	        	announcedText.textContent = "That's not an integer. How can you have that " + text + "?";
 	        	inputText.value = "";
@@ -84,11 +79,11 @@
 <script> // This one is the creation system part ok?
 	const Monsterlist = [];
 	const HitPointAmounts = [];
-	const Abilities = {};
-	const DiceAmounts = {};
-	const DiceTypes = {};
-	const ToHit = {};
-	const DamageModifiers = {};
+	const Abilities = [];
+	const DiceAmounts = [];
+	const DiceTypes = [];
+	const ToHit = [];
+	const DamageModifiers = [];
 	const MonsterBattleQuantities = []
 
 	// Below this will be let commands for various reused counter variables.
@@ -250,9 +245,6 @@
 	let CurrentMonsterName = "Blank Placeholder";
 	let TotalMonsterAmount = 0;
 	let RoundCount = 1;
-	let listText = "";
-	let name = "";
-	let quantity = 0;
 	let attackText = "";
 	let Abilityusednumbers = 0;
 	let variablename = 0;
@@ -302,10 +294,10 @@
 	}
 
 		function refresh_monster_list() {
-			listText = "<strong>Active Monsters in Battle:</strong><br>"; //set the heading
+			const listText = "<strong>Active Monsters in Battle:</strong><br>"; //set the heading
 				for (let g = 0; g < Monsterlist.length; g++) {
-					name = Monsterlist[g];
-					quantity = MonsterBattleQuantities[g];
+					const name = Monsterlist[g];
+					const quantity = MonsterBattleQuantities[g];
 
 					if (quantity > 0) {
 						listText = listText + name + " x" + quantity + "<br>";
@@ -316,7 +308,7 @@
 
 	function monster_damaged() {
 		MonsterChosenId = this.monsterIndex;
-		activeMonsters = [];
+		activeMonsters.splice(0);
 		for (let i = 0; i < FullMonsterList.length; i++) { //check the whole list
 			if (FullMonsterList[i].startsWith(Monsterlist[MonsterChosenId])) { //find the ones that start with what we nees
 		        let number = FullMonsterList[i].slice(Monsterlist[MonsterChosenId].length); //slice off the name

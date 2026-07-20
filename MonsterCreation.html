@@ -53,6 +53,30 @@
 		document.getElementById('announcedtext').textContent = ToBePrintedQuestion;
 		document.getElementById('inputdonebutton').addEventListener('click', check_yes_or_no_answers);
 	}
+
+	function check_answer(min, max, text) {
+			nmber = (document.getElementById('inputspace').value);
+			value = Number(number);
+			if (!Number.isInteger(value) || number.trim() === "") {
+	        	document.getElementById('announcedtext').textContent = "That's not an integer. How can you have that " + text + "?";
+	        	document.getElementById('inputspace').value = "";
+	        	return null;
+	    	}
+			else if (value > max) {
+	        	document.getElementById('announcedtext').textContent = "That's too much. I can only handle up to " + max + ".";
+	      		document.getElementById('inputspace').value = "";
+	      		return null;
+			}
+			else if (value < min) {
+        		document.getElementById('announcedtext').textContent = "That's less than " + min + ". How can you have that " + text + "? Try higher!";
+        		document.getElementById('inputspace').value = "";
+        		return null;
+        	}
+			else {
+				document.getElementById('inputspace').value = "";
+				return value
+			}
+		}
 	
 </script>
 
@@ -110,26 +134,11 @@
 	}
 
 	function note_hit_points() {
-		number = (document.getElementById('inputspace').value);
-		HitPointNumber = Number(number);
-		if (!Number.isInteger(HitPointNumber) || number.trim() === "") {
-        	document.getElementById('announcedtext').textContent = "That's not an integer. How can you have that many hit points?";
-        	document.getElementById('inputspace').value = "";
-    	}
-    	else if (HitPointNumber < 1) {
-        	document.getElementById('announcedtext').textContent = "That's less than 1. How can you have that many hit points? Try higher!";
-        	document.getElementById('inputspace').value = "";
-		}
-		else if (HitPointNumber > 500) {
-        	document.getElementById('announcedtext').textContent = "That's too many. I can only handle up to 500.";
-      		document.getElementById('inputspace').value = "";
-		}
-		else {
-			document.getElementById('inputspace').value = "";
-			HitPointAmounts.push (HitPointNumber);
-			document.getElementById('inputdonebutton').removeEventListener('click', note_hit_points);
-			ability_number_inquiry();
-		}
+		HitPointNumber = check_answer(1, 500, "many hit points");
+		if (HitPointNumber === null) return;
+		HitPointAmounts.push (HitPointNumber);
+		document.getElementById('inputdonebutton').removeEventListener('click', note_hit_points);
+		ability_number_inquiry();
 	}
 
 
@@ -139,25 +148,10 @@
 	}
 
 	function note_ability_number() {
-		number = (document.getElementById('inputspace').value);
-		AbilityNumber = Number(number);
-		if (!Number.isInteger(AbilityNumber) || number.trim() === "") {
-        	document.getElementById('announcedtext').textContent = "That's not an integer. How can you have that many abilities?";
-        	document.getElementById('inputspace').value = "";
-    	}
-    	else if (AbilityNumber < 1) {
-        	document.getElementById('announcedtext').textContent = "That's less than 1. How can you have that many abilities? Try higher!";
-        	document.getElementById('inputspace').value = "";
-		}
-		else if (AbilityNumber > 10) {
-        	document.getElementById('announcedtext').textContent = "That's too many. I can only handle up to 10.";
-      		document.getElementById('inputspace').value = "";
-		}
-		else {
-			document.getElementById('inputspace').value = "";
-			document.getElementById('inputdonebutton').removeEventListener('click', note_ability_number);
-			ability_name_inquiry();
-		}
+		AbilityNumber = check_answer(1, 10, "many abilities");
+		if (AbilityNumber === null) return;
+		document.getElementById('inputdonebutton').removeEventListener('click', note_ability_number);
+		ability_name_inquiry();
 	}
 
 	function ability_name_inquiry() {
@@ -185,26 +179,11 @@
 	}
 
 	function add_ability_dice_amount() {
-		number = (document.getElementById('inputspace').value);
-		DiceNumber = Number(number);
-		if (!Number.isInteger(DiceNumber) || number.trim() === "") {
-        	document.getElementById('announcedtext').textContent = "That's not an integer. How can you have that many dice?";
-        	document.getElementById('inputspace').value = "";
-    	}
-    	else if (DiceNumber < 0) {
-        	document.getElementById('announcedtext').textContent = "That's less than 0. How can you have that many dice? Try higher!";
-        	document.getElementById('inputspace').value = "";
-		}
-		else if (DiceNumber > 30) {
-        	document.getElementById('announcedtext').textContent = "That's too many. I can only handle up to 30.";
-      		document.getElementById('inputspace').value = "";
-		}
-		else {
-			document.getElementById('inputspace').value = "";
-			DiceAmounts[MonsterNumber].push(DiceNumber);
-			document.getElementById('inputdonebutton').removeEventListener('click', add_ability_dice_amount);
-			dice_type_inquiry();
-		}
+		DiceNumber = check_answer(0, 30, "many dice");
+	if (DiceNumber === null) return;
+		DiceAmounts[MonsterNumber].push (DiceNumber);
+		document.getElementById('inputdonebutton').removeEventListener('click', add_ability_dice_amount);
+		dice_type_inquiry();
 	}
 
 	function dice_type_inquiry() {
@@ -233,22 +212,11 @@
 	}
 
 	function add_to_hit() {
-		number = (document.getElementById('inputspace').value);
-		HitBonus = Number(number);
-		if (!Number.isInteger(HitBonus) || number.trim() === "") {
-        	document.getElementById('announcedtext').textContent = "That's not an integer. How can you have that bonus?";
-        	document.getElementById('inputspace').value = "";
-    	}
-		else if (HitBonus > 15) {
-        	document.getElementById('announcedtext').textContent = "That's too much. Your players and I can only handle up to 15.";
-      		document.getElementById('inputspace').value = "";
-		}
-		else {
-			document.getElementById('inputspace').value = "";
-			ToHit[MonsterNumber].push(HitBonus);
-			document.getElementById('inputdonebutton').removeEventListener('click', add_to_hit);
-			damage_bonus_inquiry();
-		}
+		HitBonus = check_answer(0, 50, "to hit bonus");
+		if (HitBonus === null) return;
+		ToHit[MonsterNumber].push (HitBonus);
+		document.getElementById('inputdonebutton').removeEventListener('click', add_to_hit);
+		damage_bonus_inquiry();
 	}
 
 	function damage_bonus_inquiry() {
@@ -257,27 +225,15 @@
 	}
 
 	function add_damage_bonus() {
-		number = (document.getElementById('inputspace').value);
-		DamageBonus = Number(number);
-		if (!Number.isInteger(DamageBonus) || number.trim() === "") {
-        	document.getElementById('announcedtext').textContent = "That's not an integer. How can you have that bonus?";
-        	document.getElementById('inputspace').value = "";
-    	}
-		else if (DamageBonus > 100) {
-        	document.getElementById('announcedtext').textContent = "That's too much. Your players and I can only handle up to 100.";
-      		document.getElementById('inputspace').value = "";
-		}
-		else {
-			document.getElementById('inputspace').value = "";
-			DamageModifiers[MonsterNumber].push(DamageBonus);
-			document.getElementById('inputdonebutton').removeEventListener('click', add_damage_bonus);
-			is_it_enough();
-		}
+		DamageBonus = check_answer(0, 50, "damage bonus");
+		if (DamageBonus === null) return;
+		DamageModifiers[MonsterNumber].push (DamageBonus);
+		document.getElementById('inputdonebutton').removeEventListener('click', add_damage_bonus);
+		is_it_enough();
 	}
 
 	function is_it_enough() {
 		CurrentAbilityNumber = CurrentAbilityNumber + 1;
-		document.getElementById('debugtext').textContent = CurrentAbilityNumber
 		if (CurrentAbilityNumber < AbilityNumber) {
 			ability_name_inquiry();
 		}

@@ -1,7 +1,6 @@
 <!DOCTYPE html> <!-- That's to help the browser -->
 <p id="announcedtext"> This is where announcements will come, very soon! </p> <br> 
 <!-- the above is an editable text space where various announcements will go, usually what used to be the print command will end up here -->
-<p id="debugtext"> This is where debugging stuff ends up :) </p> <br> 
 <p id="monsterinfolist"> This is where info on your monsters will be! </p> <br> 
 <input type="text" id="inputspace" /> 
 <input type="button" id="inputdonebutton" value="Done Inputting!" />
@@ -9,6 +8,8 @@
 <input type="button" id="startmonsterbutton" value="Create a New Monster" />
 <!-- The above button triggers the new monster creation sequence -->
 <input type="button" id="startbattlebutton" value="Start Battle!" />
+<!-- That button starts combat! -->
+<input type="button" id="clearmembutton" value="Clear all monster info" />
 <!-- That button starts combat! -->
 <div id="combatZone"></div>
 <!-- This is a zone where the combat stuff will go eventually -->
@@ -73,6 +74,43 @@
 			inputText.value = "";
 			return value
 		}
+
+	function saveMonsters() {
+	    const monsterData = {
+	        Monsterlist,
+	        HitPointAmounts,
+	        Abilities,
+	        DiceAmounts,
+	        DiceTypes,
+	        ToHit,
+	        DamageModifiers,
+	        MonsterBattleQuantities
+	    }; //make a big array with all the lists for storage
+	    localStorage.setItem("MonsterDatabase", JSON.stringify(monsterData)); //plop it into storage
+	}
+
+	function loadMonsters() {
+	    const savedData = localStorage.getItem("MonsterDatabase"); //grab it from storage
+	    if (savedData === null) {return;} //if there's nothing, ignore this
+
+	    const monsterData = JSON.parse(savedData); //decrypt
+
+	    Monsterlist.push(...monsterData.Monsterlist);
+	    HitPointAmounts.push(...monsterData.HitPointAmounts);
+	    Abilities.push(...monsterData.Abilities);
+	    DiceAmounts.push(...monsterData.DiceAmounts);
+	    DiceTypes.push(...monsterData.DiceTypes);
+	    ToHit.push(...monsterData.ToHit);
+	    DamageModifiers.push(...monsterData.DamageModifiers);
+	    MonsterBattleQuantities.push(...monsterData.MonsterBattleQuantities);
+	    //putting all the stuff into my lists
+	    MonsterNumber = Monsterlist.length; //set Monsternumber so we dont mess up
+	}
+
+	document.getElementById('clearmembutton').addEventListener('click', clearSave);
+	function clearSave() {
+	    localStorage.removeItem("MonsterDatabase");
+	}
 	
 </script>
 
@@ -86,6 +124,7 @@
 	const DamageModifiers = [];
 	const MonsterBattleQuantities = []
 
+	loadMonsters()
 	// Below this will be let commands for various reused counter variables.
 	let MonsterNumber = 0;
 	let AbilityNumber = 0;
@@ -231,6 +270,7 @@
 			CurrentAbilityNumber = 0
         	announcedText.textContent = "Perfect! The monster named " + Monsterlist[MonsterNumber] + " is complete!";
 			MonsterNumber = MonsterNumber + 1;
+			saveMonsters()
 			document.getElementById('startmonsterbutton').addEventListener('click', new_monster_name_inquiry);
 		}
 	}

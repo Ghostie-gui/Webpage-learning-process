@@ -54,7 +54,7 @@
 	}
 
 	function check_answer(min, max, text) {
-			number = (inputText.value);
+			const number = (inputText.value);
 			const value = Number(number);
 			if (!Number.isInteger(value) || number.trim() === "") {
 	        	announcedText.textContent = "That's not an integer. How can you have that " + text + "?";
@@ -124,17 +124,16 @@
 	const DamageModifiers = [];
 	const MonsterBattleQuantities = []
 
-	loadMonsters()
 	// Below this will be let commands for various reused counter variables.
 	let MonsterNumber = 0;
 	let AbilityNumber = 0;
-	let number = 0;
 	let CurrentAbilityNumber = 0;
 	let MonsterChosenId = 0;
 
 	// Below this are some rules.
 	const OkDiceTypes = [4, 6, 8, 10, 12, 20];
 
+	loadMonsters()
 	document.getElementById('startmonsterbutton').addEventListener('click', new_monster_name_inquiry);
 
 	// Below this is the functions, in chronological order.
@@ -145,16 +144,23 @@
 	}
 
 		function add_monster_name() {
-			Monsterlist.push (inputText.value.trim());
-			inputText.value = "";
-			Abilities[MonsterNumber] = [];
-			DiceAmounts[MonsterNumber] = [];
-			DiceTypes[MonsterNumber] = [];
-			ToHit[MonsterNumber] = [];
-			DamageModifiers[MonsterNumber] = [];
-			MonsterBattleQuantities.push(0);
-			inputButton.removeEventListener('click', add_monster_name);
-			hit_points_inquiry();
+			const monsterTempName = inputText.value.trim()
+			if (Monsterlist.includes(monsterTempName) || monsterTempName === ""){
+				announcedText.textContent = "That's either a blank space or a duplicate name. Try again!";
+	        	inputText.value = "";
+	        }
+	        else {
+				Monsterlist.push(monsterTempName);
+				inputText.value = "";
+				Abilities[MonsterNumber] = [];
+				DiceAmounts[MonsterNumber] = [];
+				DiceTypes[MonsterNumber] = [];
+				ToHit[MonsterNumber] = [];
+				DamageModifiers[MonsterNumber] = [];
+				MonsterBattleQuantities.push(0);
+				inputButton.removeEventListener('click', add_monster_name);
+				hit_points_inquiry();
+			}
 		}
 
 	function hit_points_inquiry() {
@@ -221,8 +227,8 @@
 	}
 
 		function add_ability_dice_type() {
-			number = (inputText.value);
-			const DiceType = Number(number);
+			const anumber = (inputText.value);
+			const DiceType = Number(anumber);
 			if (!OkDiceTypes.includes(DiceType)) {
 				announcedText.textContent = "There is no die with that many sides. Try again!";
 	        	inputText.value = "";
@@ -280,6 +286,7 @@
 	const FullMonsterList = [];
 	const CurrentHitpointAmounts = [];
 	const activeMonsters = []
+	const FullHitPointAmounts = []
 
 	let ThisMonsterAmount = 0;
 	let CurrentMonsterName = "Blank Placeholder";
@@ -295,8 +302,6 @@
 	let damage = 0;
 	let chosenMonster = "Blank Placeholder"
 	let chosen = "Blank Placeholder" //this one is the index of the chosen monster i thinkkk
-	let listText = ""
-
 
 	let critHit = false;
 	let critFail = false;
@@ -331,21 +336,10 @@
 		CurrentMonsterName = Monsterlist[MonsterChosenId] + MonsterBattleQuantities[MonsterChosenId];
 		FullMonsterList.push(CurrentMonsterName); //change this to be at the right spot
 		CurrentHitpointAmounts.push(HitPointAmounts[MonsterChosenId]); //change this to be at the right spot
+		FullHitPointAmounts.push(HitPointAmounts[MonsterChosenId]); //change this to be at the right spot
 		refresh_monster_list();
+		refresh_status_board();
 	}
-
-		function refresh_monster_list() {
-			listText = "<strong>Active Monsters in Battle:</strong><br>"; //set the heading
-				for (let g = 0; g < Monsterlist.length; g++) {
-					const name = Monsterlist[g];
-					const quantity = MonsterBattleQuantities[g];
-
-					if (quantity > 0) {
-						listText = listText + name + " x" + quantity + "<br>";
-					}
-				}
-			document.getElementById('MonsterTally').innerHTML = listText;
-		}
 
 	function monster_damaged() {
 		MonsterChosenId = this.monsterIndex;
@@ -390,9 +384,33 @@
 					announcedText.textContent = "Thank you! " + Monsterlist[MonsterChosenId] + chosenMonster + " is dead now!";
 					FullMonsterList.splice(chosen.index, 1);
 					CurrentHitpointAmounts.splice(chosen.index, 1);
-					MonsterBattleQuantities[MonsterChosenId] -= 1
+					FullHitPointAmounts.splice(chosen.index, 1);
+					MonsterBattleQuantities[MonsterChosenId] -= 1;
+					refresh_monster_list();
+				}
+				refresh_status_board();
+			}
+
+	function refresh_status_board() {
+		let boardText = "<strong>Monster Health:</strong><br>"; //set the heading
+		for (let g = 0; g < FullMonsterList.length; g++) {
+			boardText += FullMonsterList[g] + " - " + CurrentHitpointAmounts[g] + "/" + FullHitPointAmounts[g] + " hit points<br>";
+		}
+		document.getElementById("StatusBoard").innerHTML = boardText;
+	}
+
+	function refresh_monster_list() {
+		let listText = "<strong>Active Monsters in Battle:</strong><br>"; //set the heading
+			for (let g = 0; g < Monsterlist.length; g++) {
+				const name = Monsterlist[g];
+				const quantity = MonsterBattleQuantities[g];
+
+				if (quantity > 0) {
+					listText = listText + name + " x" + quantity + "<br>";
 				}
 			}
+		document.getElementById('MonsterTally').innerHTML = listText;
+	}
 
 	function combat_over(){
 		document.getElementById('startbattlebutton').addEventListener('click', battle_sequence);
@@ -428,7 +446,7 @@
 					basedamage = basedamage + random(1, anothervariablename);
 				}
 				damage = basedamage + DamageModifiers[h][Abilityusednumbers];
-				attackText = attackText + Monsterlist[h] + (j + 1) + " attacked and dealt " + damage + " damage, with a to hit roll of " + attackroll + ".";
+				attackText = attackText + Monsterlist[h] + (j + 1) + " used " + Abilities[h][Abilityusednumbers] + " and dealt " + damage + " damage, with a to hit roll of " + attackroll + ".";
 				if (critHit === true) {
 					attackText = attackText + " This was a crit hit.";
 				}
@@ -486,7 +504,23 @@
     	togglemodebutton.value = "Switch to Damage Mode"; 
     	combatZone.appendChild(togglemodebutton);
     	togglemodebutton.addEventListener('click', toggle_mode); //setting up a button that changes the mode of the other buttons
+
+    	const statusBoard = document.createElement("div");
+		statusBoard.id = "StatusBoard";
+		combatZone.appendChild(statusBoard); //the status board :)
 	}
 </script>
+
+<style>
+	#StatusBoard { /*# setting up the status board*/
+    border: 1px solid black;
+    padding: 6px;
+    width: 250px;
+    height: 200px;
+    overflow-y: auto;
+    margin-top: 10px;
+}
+</style>
+
 
 

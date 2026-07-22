@@ -10,11 +10,16 @@
 <input type="button" id="startbattlebutton" value="Start Battle!" />
 <!-- That button starts combat! -->
 <input type="button" id="clearmembutton" value="Clear all monster info" />
-<!-- That button starts combat! -->
+<!-- That button clears memory! -->
 <div id="combatZone"></div>
 <!-- This is a zone where the combat stuff will go eventually -->
 <div id="combatAttackZone"></div>
 <!-- This is where monster attacks are noted -->
+<input type="button" id="exportmonsterbutton" value="Export monster info" />
+<!-- That's for exporting monster stuff -->
+<input type="button" id="importmonsterbutton" value="Import monster info (CLEARING ALL OTHER MONSTER DATA)" />
+<input type="file" id="importFile" accept=".json" hidden>
+<!-- Those are for the input -->
 
 
 <script> //crucial functions
@@ -110,6 +115,82 @@
 	document.getElementById('clearmembutton').addEventListener('click', clearSave);
 	function clearSave() {
 	    localStorage.removeItem("MonsterDatabase");
+	    Monsterlist.length = 0;
+		HitPointAmounts.length = 0;
+		Abilities.length = 0;
+		DiceAmounts.length = 0;
+		DiceTypes.length = 0;
+		ToHit.length = 0;
+		DamageModifiers.length = 0;
+		MonsterBattleQuantities.length = 0;
+
+		MonsterNumber = 0;
+	}
+
+	document.getElementById('exportmonsterbutton').addEventListener('click', exportMonsters);
+	function exportMonsters() {
+		const monsterData = {
+	        Monsterlist,
+	        HitPointAmounts,
+	        Abilities,
+	        DiceAmounts,
+	        DiceTypes,
+	        ToHit,
+	        DamageModifiers,
+	        MonsterBattleQuantities
+	    }; //make a big array with all the lists for storage
+	    const text = JSON.stringify(monsterData); //make it into a JSON
+	    const file = new Blob( [text], { type: "application/json" }); //blob is a file. [text] means that we should put the const text we just made in, and then the type is a JSON file. 
+	    const url = URL.createObjectURL(file); //It MAKES A FAKE URL because the browser can only download URLs somehow
+	    const link = document.createElement("a"); //and then makes a link for it, the a is like a normal link
+	    link.href = url; //set the destination of the link
+	    link.download = "MonsterDatabase.json"; //and give the file a name
+	    link.click(); //and then it tells the browser the link was clicked
+	    URL.revokeObjectURL(url); //and now the link is gone!
+	}
+
+	const importFile = document.getElementById("importFile");
+	document.getElementById('importmonsterbutton').addEventListener('click', startInput);
+	importFile.addEventListener("change", importMonsters);
+
+	function startInput(){
+		importFile.click(); //start the next function
+	}
+
+	function importMonsters() {
+		const file = importFile.files[0]; //takes the first selected file
+		if (!file) { return; } //stops it if its not a file
+		const reader = new FileReader(); //a file reader
+		reader.readAsText(file); //'read this as plain text'
+		reader.onload = function () {
+			try {
+    			const monsterData = JSON.parse(reader.result);
+    			Monsterlist.length = 0;
+				HitPointAmounts.length = 0;
+				Abilities.length = 0;
+				DiceAmounts.length = 0;
+				DiceTypes.length = 0;
+				ToHit.length = 0;
+				DamageModifiers.length = 0;
+				MonsterBattleQuantities.length = 0;
+    			Monsterlist.push(...monsterData.Monsterlist);
+    			HitPointAmounts.push(...monsterData.HitPointAmounts);
+			    Abilities.push(...monsterData.Abilities);
+			    DiceAmounts.push(...monsterData.DiceAmounts);
+			    DiceTypes.push(...monsterData.DiceTypes);
+			    ToHit.push(...monsterData.ToHit);
+			    DamageModifiers.push(...monsterData.DamageModifiers);
+			    MonsterBattleQuantities.push(...monsterData.MonsterBattleQuantities);
+			    MonsterNumber = Monsterlist.length;
+			    saveMonsters();
+			    importFile.value = "";
+			    refresh_monster_list();
+				refresh_status_board();
+			    announcedText.textContent = "Ok! Congrats, your monsters have been imported, and the ones that were already there have been cleared."
+			}
+			catch {announcedText.textContent = "That doesn't appear to be a valid monster database."; } //stop them if it doesn't make sense
+			importFile.value = "";
+		};
 	}
 	
 </script>

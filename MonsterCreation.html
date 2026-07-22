@@ -255,6 +255,7 @@
 	let damage = 0;
 	let chosenMonster = "Blank Placeholder"
 	let chosen = "Blank Placeholder" //this one is the index of the chosen monster i thinkkk
+	let listText = ""
 
 
 	let critHit = false;
@@ -294,7 +295,7 @@
 	}
 
 		function refresh_monster_list() {
-			const listText = "<strong>Active Monsters in Battle:</strong><br>"; //set the heading
+			listText = "<strong>Active Monsters in Battle:</strong><br>"; //set the heading
 				for (let g = 0; g < Monsterlist.length; g++) {
 					const name = Monsterlist[g];
 					const quantity = MonsterBattleQuantities[g];
@@ -349,6 +350,7 @@
 					announcedText.textContent = "Thank you! " + Monsterlist[MonsterChosenId] + chosenMonster + " is dead now!";
 					FullMonsterList.splice(chosen.index, 1);
 					CurrentHitpointAmounts.splice(chosen.index, 1);
+					MonsterBattleQuantities[MonsterChosenId] -= 1
 				}
 			}
 

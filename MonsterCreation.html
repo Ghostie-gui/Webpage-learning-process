@@ -184,9 +184,12 @@
 			    MonsterNumber = Monsterlist.length;
 			    saveMonsters();
 			    importFile.value = "";
+			    CurrentHitpointAmounts.length = 0;
+			    FullMonsterList.length = 0;
+			    FullHitPointAmounts.length = 0;
 			    refresh_monster_list();
 				refresh_status_board();
-			    announcedText.textContent = "Ok! Congrats, your monsters have been imported, and the ones that were already there have been cleared."
+			    announcedText.textContent = "Ok! Congrats, your monsters have been imported, and the ones that were already there have been cleared. There are no more active monsters in your battle."
 			}
 			catch {announcedText.textContent = "That doesn't appear to be a valid monster database."; } //stop them if it doesn't make sense
 			importFile.value = "";

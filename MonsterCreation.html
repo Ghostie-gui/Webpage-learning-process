@@ -501,6 +501,9 @@
 		document.getElementById('startmonsterbutton').addEventListener('click', new_monster_name_inquiry);
 		document.getElementById("combatZone").innerHTML = ""; //empty the zone
     	document.getElementById("combatAttackZone").innerHTML = ""; //empty the zone
+    	CurrentHitpointAmounts.length = 0;
+		FullMonsterList.length = 0;
+		FullHitPointAmounts.length = 0;
     	announcedText.textContent = "Combat over!";
 	}
 

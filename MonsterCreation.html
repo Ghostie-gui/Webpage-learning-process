@@ -1,25 +1,30 @@
 <!DOCTYPE html> <!-- That's to help the browser -->
-<p id="announcedtext"> This is where announcements will come, very soon! </p> <br> 
-<!-- the above is an editable text space where various announcements will go, usually what used to be the print command will end up here -->
-<p id="monsterinfolist"> This is where info on your monsters will be! </p> <br> 
-<input type="text" id="inputspace" /> 
-<input type="button" id="inputdonebutton" value="Done Inputting!" />
-<!-- the above is an input space and button, the button should trigger various things-->
-<input type="button" id="startmonsterbutton" value="Create a New Monster" />
-<!-- The above button triggers the new monster creation sequence -->
-<input type="button" id="startbattlebutton" value="Start Battle!" />
-<!-- That button starts combat! -->
-<input type="button" id="clearmembutton" value="Clear all monster info" />
-<!-- That button clears memory! -->
-<div id="combatZone"></div>
-<!-- This is a zone where the combat stuff will go eventually -->
-<div id="combatAttackZone"></div>
-<!-- This is where monster attacks are noted -->
-<input type="button" id="exportmonsterbutton" value="Export monster info" />
-<!-- That's for exporting monster stuff -->
-<input type="button" id="importmonsterbutton" value="Import monster info (CLEARING ALL OTHER MONSTER DATA)" />
-<input type="file" id="importFile" accept=".json" hidden>
-<!-- Those are for the input -->
+<div id="pageLayout">
+	<div id="announcementArea">
+		<p id="announcedtext"> This is where announcements will come, very soon! </p> <br> 
+	<div id="inputArea">
+		<input type="text" id="inputspace" />
+		<input type="button" id="inputdonebutton" value="Done Inputting!" />
+	</div>
+	<div id="mainButtons">
+		<input type="button" id="startmonsterbutton" value="Create a New Monster" />
+		<!-- The above button triggers the new monster creation sequence -->
+		<input type="button" id="startbattlebutton" value="Start Battle!" />
+		<!-- That button starts combat! -->
+	</div>
+	<div id="membuttons">
+		<input type="button" id="clearmembutton" value="Clear all monster info" />
+		<!-- That button clears memory! -->
+		<div id="combatZone"></div>
+		<!-- This is a zone where the combat stuff will go eventually -->
+		<div id="combatAttackZone"></div>
+		<!-- This is where monster attacks are noted -->
+		<input type="button" id="exportmonsterbutton" value="Export monster info" />
+		<!-- That's for exporting monster stuff -->
+		<input type="button" id="importmonsterbutton" value="Import monster info (CLEARING ALL OTHER MONSTER DATA)" />
+		<input type="file" id="importFile" accept=".json" hidden>
+		<!-- Those are for the input -->
+	</div>
 
 
 <script> //crucial functions
@@ -554,12 +559,20 @@
     	document.getElementById("combatAttackZone").innerHTML = ""; //empty the zone
 
     	const monsterCounter = document.createElement("p"); //make a paragraph
-    	combatZone.appendChild(monsterCounter); //put it in the zone
     	monsterCounter.id = "MonsterTally"; //give it its id  
+    	combatZone.appendChild(monsterCounter); //put it in the zone
+
+	    	const monsterButtons = document.createElement("div"); //minizone for monsters' buttons
+			monsterButtons.id = "monsterButtons";
+			combatZone.appendChild(monsterButtons);
+
+			const combatControls = document.createElement("div"); //minizone the buttons that control combat
+			combatControls.id = "combatControls";
+			combatZone.appendChild(combatControls);
 
     	const attacksCounter = document.createElement("p"); //make a paragraph
-    	combatAttackZone.appendChild(attacksCounter); //put it in the zone
     	attacksCounter.id = "AttacksDisplay"; //id it
+    	combatAttackZone.appendChild(attacksCounter); //put it in the zone
 
     	for (let i = 0; i < Monsterlist.length; i++) { //ready a loop, set i to 0, go until it reaches the length, add 1 each time
     		const monsterButton = document.createElement("input");
@@ -567,7 +580,7 @@
 			monsterButton.id = "monster" + i + "button";
     		monsterButton.value = Monsterlist[i];
     		monsterButton.monsterIndex = i;
-    		combatZone.appendChild(monsterButton); //put it in the zone
+    		monsterButtons.appendChild(monsterButton); //put it in the minizone
     		monsterButton.addEventListener('click', monster_selected);
     		//that loop sets up a button
     	}
@@ -575,21 +588,21 @@
 		roundstartbutton.type = "button";
 		roundstartbutton.id = "StartsARound";
     	roundstartbutton.value = "Begin a round of attacks!"; 
-    	combatZone.appendChild(roundstartbutton);
+    	combatControls.appendChild(roundstartbutton);
     	document.getElementById('StartsARound').addEventListener('click', round_of_attacks); //setting up a button that starts a round
 
     	const combatendbutton = document.createElement("input");
 		combatendbutton.type = "button";
 		combatendbutton.id = "EndCombat";
     	combatendbutton.value = "End combat mode!"; 
-    	combatZone.appendChild(combatendbutton);
+    	combatControls.appendChild(combatendbutton);
     	document.getElementById('EndCombat').addEventListener('click', combat_over); //setting up a button that ends battle
 
     	const togglemodebutton = document.createElement("input");
 		togglemodebutton.type = "button";
 		togglemodebutton.id = "ChangesMode";
     	togglemodebutton.value = "Switch to Damage Mode"; 
-    	combatZone.appendChild(togglemodebutton);
+    	combatControls.appendChild(togglemodebutton);
     	togglemodebutton.addEventListener('click', toggle_mode); //setting up a button that changes the mode of the other buttons
 
     	const statusBoard = document.createElement("div");
@@ -599,14 +612,65 @@
 </script>
 
 <style>
-	#StatusBoard { /*# setting up the status board*/
+	#pageLayout {
+	    display: grid; /*Tell it its a grid*/
+	    grid-template-columns: 1fr 2fr; /*1:2 ratio for the columns*/
+	    grid-template-areas: /*layout*/
+	        "announcement attacks"
+	        "input        attacks"
+	        "buttons      attacks"
+	        "combat       attacks"
+	        "bottom       bottom";
+	}
+	#announcementArea {grid-area: announcement;}
+	#inputArea {grid-area: input;}
+	#mainButtons {grid-area: buttons;}
+	#combatZone {grid-area: combat;}
+	#combatAttackZone {grid-area: attacks;}
+	#membuttons {grid-area: bottom;}
+	/*Tell it what goes where*/
+	#announcementArea, #inputArea, #mainButtons, #combatZone, #combatAttackZone, #membuttons {padding: 10px;}
+	#pageLayout {gap: 10px;}
+	/*Add some padding*/
+
+	#combatAttackZone { /* setting up the attack zone*/
+    border: 1px solid black;
+    min-height: 600px;
+    max-height: 800px;
+    overflow-y: auto;
+    padding: 10px;
+    box-sizing: border-box;
+	}
+    #monsterButtons { /* setting up the monster buttons*/
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+	}
+	#combatControls { /* setting up the combat controls*/
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+	}
+	#AttacksDisplay { /* attacks display area */
+    padding: 10px;
+	}
+	#StatusBoard { /* setting up the status board*/
     border: 1px solid black;
     padding: 6px;
-    width: 250px;
+    width: 100%; /* of the given space */
+    max-width: 350px; /* up tp 350 px */
     height: 200px;
     overflow-y: auto;
     margin-top: 10px;
-}
+    box-sizing: border-box;
+	}
+	#bottomButtons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    border-top: 1px solid black;
+    padding-top: 10px;
+	}
 </style>
 
 

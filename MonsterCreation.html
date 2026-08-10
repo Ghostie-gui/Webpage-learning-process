@@ -2,6 +2,7 @@
 <div id="pageLayout">
 	<div id="announcementArea">
 		<p id="announcedtext"> This is where announcements will come, very soon! </p> <br> 
+	</div>
 	<div id="inputArea">
 		<input type="text" id="inputspace" />
 		<input type="button" id="inputdonebutton" value="Done Inputting!" />
@@ -15,16 +16,16 @@
 	<div id="membuttons">
 		<input type="button" id="clearmembutton" value="Clear all monster info" />
 		<!-- That button clears memory! -->
-		<div id="combatZone"></div>
-		<!-- This is a zone where the combat stuff will go eventually -->
-		<div id="combatAttackZone"></div>
-		<!-- This is where monster attacks are noted -->
 		<input type="button" id="exportmonsterbutton" value="Export monster info" />
 		<!-- That's for exporting monster stuff -->
 		<input type="button" id="importmonsterbutton" value="Import monster info (CLEARING ALL OTHER MONSTER DATA)" />
 		<input type="file" id="importFile" accept=".json" hidden>
 		<!-- Those are for the input -->
 	</div>
+	<div id="combatZone"></div>
+	<!-- This is a zone where the combat stuff will go eventually -->
+	<div id="combatAttackZone"></div>
+	<!-- This is where monster attacks are noted -->
 
 
 <script> //crucial functions
@@ -374,8 +375,8 @@
 <script>
 	const FullMonsterList = [];
 	const CurrentHitpointAmounts = [];
-	const activeMonsters = []
-	const FullHitPointAmounts = []
+	const activeMonsters = [];
+	const FullHitPointAmounts = [];
 
 	let ThisMonsterAmount = 0;
 	let CurrentMonsterName = "Blank Placeholder";
@@ -506,9 +507,6 @@
 		document.getElementById('startmonsterbutton').addEventListener('click', new_monster_name_inquiry);
 		document.getElementById("combatZone").innerHTML = ""; //empty the zone
     	document.getElementById("combatAttackZone").innerHTML = ""; //empty the zone
-    	CurrentHitpointAmounts.length = 0;
-		FullMonsterList.length = 0;
-		FullHitPointAmounts.length = 0;
     	announcedText.textContent = "Combat over!";
 	}
 
@@ -552,6 +550,13 @@
 	}
 
 	function battle_sequence() {
+		MonsterBattleQuantities.length = 0;
+		MonsterBattleQuantities.push(...new Array(MonsterNumber).fill(0));
+		const FullMonsterList = [];
+		const CurrentHitpointAmounts = [];
+		const activeMonsters = [];
+		const FullHitPointAmounts = [];
+
 		document.getElementById('startbattlebutton').removeEventListener('click', battle_sequence);
 		document.getElementById('startmonsterbutton').removeEventListener('click', new_monster_name_inquiry);
     	announcedText.textContent = "Let's prep for combat! A bunch of buttons will appear. Just click them to indicate a new monster! You can also add a new one anytime!";
@@ -608,6 +613,9 @@
     	const statusBoard = document.createElement("div");
 		statusBoard.id = "StatusBoard";
 		combatZone.appendChild(statusBoard); //the status board :)
+
+		refresh_monster_list()
+		refresh_status_board()
 	}
 </script>
 
@@ -621,6 +629,8 @@
 	        "buttons      attacks"
 	        "combat       attacks"
 	        "bottom       bottom";
+	    gap: 10px;
+	    align-items: start;
 	}
 	#announcementArea {grid-area: announcement;}
 	#inputArea {grid-area: input;}
@@ -635,7 +645,6 @@
 
 	#combatAttackZone { /* setting up the attack zone*/
     border: 1px solid black;
-    min-height: 600px;
     max-height: 800px;
     overflow-y: auto;
     padding: 10px;
@@ -664,7 +673,7 @@
     margin-top: 10px;
     box-sizing: border-box;
 	}
-	#bottomButtons {
+	#membuttons {
     display: flex;
     flex-wrap: wrap;
     gap: 5px;

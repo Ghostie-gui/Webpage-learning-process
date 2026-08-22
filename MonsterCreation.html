@@ -1,17 +1,19 @@
 <!DOCTYPE html> <!-- That's to help the browser -->
 <div id="pageLayout">
 	<div id="announcementArea">
-		<p id="announcedtext"> This is where announcements will come, very soon! </p> <br> 
+		<p id="announcedtext"> Announcements will show up here! </p> <br> 
 	</div>
 	<div id="inputArea">
 		<input type="text" id="inputspace" />
 		<input type="button" id="inputdonebutton" value="Done Inputting!" />
+		<input type="button" id="gotitbutton" value="Got it!" />
 	</div>
 	<div id="mainButtons">
 		<input type="button" id="startmonsterbutton" value="Create a New Monster" />
 		<!-- The above button triggers the new monster creation sequence -->
 		<input type="button" id="startbattlebutton" value="Start Battle!" />
 		<!-- That button starts combat! -->
+		<div id="monsterButtons"> </div>
 	</div>
 	<div id="membuttons">
 		<input type="button" id="clearmembutton" value="Clear all monster info" />
@@ -32,9 +34,14 @@
 	const yesAnswers = ["yes", "yeah", "y"];
     const noAnswers = ["no", "n"];
 
- 	const inputText = document.getElementById('inputspace')
- 	const announcedText = document.getElementById('announcedtext')
- 	const inputButton = document.getElementById('inputdonebutton')
+ 	const inputText = document.getElementById('inputspace');
+ 	const announcedText = document.getElementById('announcedtext');
+ 	const inputButton = document.getElementById('inputdonebutton');
+
+ 	document.getElementById('gotitbutton').addEventListener('click', gotIt)
+ 	function gotIt() {
+ 		announcedText.textContent = "Announcements will show up here!"
+ 	}
 
 	function random(min, max) {
 	  const low = Math.ceil(min);
@@ -83,7 +90,7 @@
         		return null;
         	}
 			inputText.value = "";
-			return value
+			return value;
 		}
 
 	function saveMonsters() {
@@ -95,7 +102,6 @@
 	        DiceTypes,
 	        ToHit,
 	        DamageModifiers,
-	        MonsterBattleQuantities
 	    }; //make a big array with all the lists for storage
 	    localStorage.setItem("MonsterDatabase", JSON.stringify(monsterData)); //plop it into storage
 	}
@@ -113,9 +119,18 @@
 	    DiceTypes.push(...monsterData.DiceTypes);
 	    ToHit.push(...monsterData.ToHit);
 	    DamageModifiers.push(...monsterData.DamageModifiers);
-	    MonsterBattleQuantities.push(...monsterData.MonsterBattleQuantities);
 	    //putting all the stuff into my lists
 	    MonsterNumber = Monsterlist.length; //set Monsternumber so we dont mess up
+	    for (let i = 0; i < MonsterNumber; i++) { //go through each one
+	 		const monsterButton = document.createElement("input");
+			monsterButton.type = "button";
+			monsterButton.id = "monster" + Monsterlist[i] + "button";
+			monsterButton.value = Monsterlist[i];
+			monsterButton.monsterIndex = i;
+			monsterButtons.appendChild(monsterButton); //put it in the minizone
+			monsterButton.addEventListener('click', monster_selected);
+			//that should have set up its own button?
+		}
 	}
 
 	document.getElementById('clearmembutton').addEventListener('click', clearSave);
@@ -129,8 +144,13 @@
 		ToHit.length = 0;
 		DamageModifiers.length = 0;
 		MonsterBattleQuantities.length = 0;
-
+		MonsterBattleNames.length = 0;
+		FullMonsterList.length = 0;
+		CurrentHitpointAmounts.length = 0;
+		FullHitPointAmounts.length = 0;
+		activeMonsters.length = 0;
 		MonsterNumber = 0;
+		document.getElementById("monsterButtons").innerHTML = ""; //empty the zone
 	}
 
 	document.getElementById('exportmonsterbutton').addEventListener('click', exportMonsters);
@@ -143,7 +163,6 @@
 	        DiceTypes,
 	        ToHit,
 	        DamageModifiers,
-	        MonsterBattleQuantities
 	    }; //make a big array with all the lists for storage
 	    const text = JSON.stringify(monsterData); //make it into a JSON
 	    const file = new Blob( [text], { type: "application/json" }); //blob is a file. [text] means that we should put the const text we just made in, and then the type is a JSON file. 
@@ -171,14 +190,6 @@
 		reader.onload = function () {
 			try {
     			const monsterData = JSON.parse(reader.result);
-    			Monsterlist.length = 0;
-				HitPointAmounts.length = 0;
-				Abilities.length = 0;
-				DiceAmounts.length = 0;
-				DiceTypes.length = 0;
-				ToHit.length = 0;
-				DamageModifiers.length = 0;
-				MonsterBattleQuantities.length = 0;
     			Monsterlist.push(...monsterData.Monsterlist);
     			HitPointAmounts.push(...monsterData.HitPointAmounts);
 			    Abilities.push(...monsterData.Abilities);
@@ -186,25 +197,49 @@
 			    DiceTypes.push(...monsterData.DiceTypes);
 			    ToHit.push(...monsterData.ToHit);
 			    DamageModifiers.push(...monsterData.DamageModifiers);
-			    MonsterBattleQuantities.push(...monsterData.MonsterBattleQuantities);
+			    Monsterlist.splice(0, MonsterNumber)
+				HitPointAmounts.splice(0, MonsterNumber)
+				Abilities.splice(0, MonsterNumber)
+				DiceAmounts.splice(0, MonsterNumber)
+				DiceTypes.splice(0, MonsterNumber)
+				ToHit.splice(0, MonsterNumber)
+				DamageModifiers.splice(0, MonsterNumber)
 			    MonsterNumber = Monsterlist.length;
+			    MonsterBattleQuantities.length = 0;
+				MonsterBattleQuantities.push(...new Array(MonsterNumber).fill(0));
+				MonsterBattleNames.length = 0;
+				MonsterBattleNames.push(...new Array(MonsterNumber).fill(0));
 			    saveMonsters();
 			    importFile.value = "";
 			    CurrentHitpointAmounts.length = 0;
 			    FullMonsterList.length = 0;
 			    FullHitPointAmounts.length = 0;
-			    refresh_monster_list();
-				refresh_status_board();
+			    if (battleMode === true){
+				    refresh_monster_list();
+					refresh_status_board();
+				}
 			    announcedText.textContent = "Ok! Congrats, your monsters have been imported, and the ones that were already there have been cleared. There are no more active monsters in your battle."
+			    document.getElementById("monsterButtons").innerHTML = ""; //empty the zone
+			    for (let i = 0; i < MonsterNumber; i++) { //go through each one
+			 		const monsterButton = document.createElement("input");
+					monsterButton.type = "button";
+					monsterButton.id = "monster" + Monsterlist[i] + "button";
+					monsterButton.value = Monsterlist[i];
+					monsterButton.monsterIndex = i;
+					monsterButtons.appendChild(monsterButton); //put it in the minizone
+					monsterButton.addEventListener('click', monster_selected);
+					//that should have set up its own button?
+				}
 			}
-			catch {announcedText.textContent = "That doesn't appear to be a valid monster database."; } //stop them if it doesn't make sense
+			catch (error) {
+				console.log(error);
+				announcedText.textContent = "That doesn't appear to be a valid monster database.";
+			} //stop them if it doesn't make sense
 			importFile.value = "";
 		};
 	}
 	
-</script>
 
-<script> // This one is the creation system part ok?
 	const Monsterlist = [];
 	const HitPointAmounts = [];
 	const Abilities = [];
@@ -212,7 +247,8 @@
 	const DiceTypes = [];
 	const ToHit = [];
 	const DamageModifiers = [];
-	const MonsterBattleQuantities = []
+	const MonsterBattleQuantities = [];
+	const MonsterBattleNames = [];
 
 	// Below this will be let commands for various reused counter variables.
 	let MonsterNumber = 0;
@@ -243,11 +279,12 @@
 				Monsterlist.push(monsterTempName);
 				inputText.value = "";
 				Abilities[MonsterNumber] = [];
-				DiceAmounts[MonsterNumber] = [];
+				DiceAmounts[MonsterNumber] = []; 
 				DiceTypes[MonsterNumber] = [];
 				ToHit[MonsterNumber] = [];
 				DamageModifiers[MonsterNumber] = [];
 				MonsterBattleQuantities.push(0);
+				MonsterBattleNames.push(0)
 				inputButton.removeEventListener('click', add_monster_name);
 				hit_points_inquiry();
 			}
@@ -365,14 +402,20 @@
 		else {
 			CurrentAbilityNumber = 0
         	announcedText.textContent = "Perfect! The monster named " + Monsterlist[MonsterNumber] + " is complete!";
-			MonsterNumber = MonsterNumber + 1;
-			saveMonsters()
+			saveMonsters();
+    		const monsterButton = document.createElement("input");
+    		monsterButton.type = "button";
+			monsterButton.id = "monster" + Monsterlist[MonsterNumber] + "button";
+    		monsterButton.value = Monsterlist[MonsterNumber];
+    		monsterButton.monsterIndex = MonsterNumber;
+    		monsterButtons.appendChild(monsterButton); //put it in the minizone
+    		monsterButton.addEventListener('click', monster_selected);
+    		//that should have set up its own button?
+    		MonsterNumber = MonsterNumber + 1;
 			document.getElementById('startmonsterbutton').addEventListener('click', new_monster_name_inquiry);
 		}
 	}
-</script>
 
-<script>
 	const FullMonsterList = [];
 	const CurrentHitpointAmounts = [];
 	const activeMonsters = [];
@@ -389,61 +432,76 @@
 	let basedamage = 0;
 	let anothervariablename = 0;
 	let damage = 0;
-	let chosenMonster = "Blank Placeholder"
-	let chosen = "Blank Placeholder" //this one is the index of the chosen monster i thinkkk
+	let chosenMonster = "Blank Placeholder";
+	let chosen = "Blank Placeholder"; //this one is the index of the chosen monster i thinkkk
 
 	let critHit = false;
 	let critFail = false;
-
-	let combatMode = "AddingMonsters"
+	let battleMode = false;
 
 	document.getElementById('startbattlebutton').addEventListener('click', battle_sequence);
 
-	function toggle_mode() {
-	    if (combatMode === "AddingMonsters") {
-	        combatMode = "Damage";
-	        this.value = "Switch to Add Mode";
-	    }
-	    else {
-	        combatMode = "AddingMonsters";
-	        this.value = "Switch to Damage Mode";
-	    }
-	}
+	
 
 	function monster_selected() {
-		if (combatMode === "AddingMonsters") {
-			monster_added.call(this);
-		}
-		else if (combatMode === "Damage") {
-			monster_damaged.call(this)
-		}
+		MonsterChosenId = this.monsterIndex
+		announcedText.innerHTML = "What would you like to do with a " + this.value + "? <br> To add another one to the battlefield, input 1. <br> To damage one, input 2. <br> To delete its info, input 3. <br> To view its info, input 4. <br> To do nothing, input anything else.";
+		inputButton.addEventListener('click', find_button_mode);
 	}
+		function find_button_mode() {
+			inputButton.removeEventListener('click', find_button_mode)
+			const answer = inputText.value;
+			if (answer === "1") {monster_added}
+			else if (answer === "2") {monster_damaged}
+			else if (answer === "3") {monster_deleted}
+			else if (answer === "4") {monster_info}
+			else {announcedText.textContent = "Cool, nothing will happen.";}
+			inputText.value = ""; 
+		}
 
-	function monster_added() { //this function adds 1 to the monster's spot in the quantities list
-		MonsterChosenId = this.monsterIndex;
-		MonsterBattleQuantities[MonsterChosenId] = MonsterBattleQuantities[MonsterChosenId] + 1;
-		CurrentMonsterName = Monsterlist[MonsterChosenId] + MonsterBattleQuantities[MonsterChosenId];
-		FullMonsterList.push(CurrentMonsterName); //change this to be at the right spot
-		CurrentHitpointAmounts.push(HitPointAmounts[MonsterChosenId]); //change this to be at the right spot
-		FullHitPointAmounts.push(HitPointAmounts[MonsterChosenId]); //change this to be at the right spot
-		refresh_monster_list();
-		refresh_status_board();
+	function monster_added() {
+		announcedText.textContent = "How many will you add?";
+		inputButton.addEventListener('click', adding_the_monster);
 	}
+		function adding_the_monster() { //this function adds 1 to the monster's spot in the quantities list
+			if (battleMode === true) {
+				const addedAmount = check_answer(0, 50, "many new monsters");
+				if (addedAmount === null) return;
+				announcedText.textContent = "Added " + addedAmount + " new " + Monsterlist[MonsterChosenId] + "!";
+				for (let i = 0; i < addedAmount; i++) {
+					MonsterBattleQuantities[MonsterChosenId] = MonsterBattleQuantities[MonsterChosenId] + 1;
+					MonsterBattleNames[MonsterChosenId] = MonsterBattleNames[MonsterChosenId] + 1;
+					CurrentMonsterName = Monsterlist[MonsterChosenId] + MonsterBattleNames[MonsterChosenId]; //to avoid duplicates
+					FullMonsterList.push(CurrentMonsterName); 
+					CurrentHitpointAmounts.push(HitPointAmounts[MonsterChosenId]); 
+					FullHitPointAmounts.push(HitPointAmounts[MonsterChosenId]); 
+				}
+				refresh_monster_list();
+				refresh_status_board();
+			}
+			else {
+				announcedText.textContent = "What? You're not even in battle!";
+			}
+		}
 
 	function monster_damaged() {
-		MonsterChosenId = this.monsterIndex;
-		activeMonsters.splice(0);
-		for (let i = 0; i < FullMonsterList.length; i++) { //check the whole list
-			if (FullMonsterList[i].startsWith(Monsterlist[MonsterChosenId])) { //find the ones that start with what we nees
-		        let number = FullMonsterList[i].slice(Monsterlist[MonsterChosenId].length); //slice off the name
-		        activeMonsters.push({
-		        	number: number,
-		        	index: i
-		        });
-    		}
+		if (battleMode === true) {
+			activeMonsters.splice(0);
+			for (let i = 0; i < FullMonsterList.length; i++) { //check the whole list
+				if (FullMonsterList[i].startsWith(Monsterlist[MonsterChosenId])) { //find the ones that start with what we nees
+			        let number = FullMonsterList[i].slice(Monsterlist[MonsterChosenId].length); //slice off the name
+			        activeMonsters.push({
+			        	number: number,
+			        	index: i
+			        });
+	    		}
+			}
+			announcedText.textContent = "Ok! Which " + Monsterlist[MonsterChosenId] + " was damaged? Your options are:" + activeMonsters.map(monster => monster.number).join(" / ");
+			inputButton.addEventListener('click', finding_monster);
 		}
-		announcedText.textContent = "Ok! Which " + Monsterlist[MonsterChosenId] + " was damaged? Your options are:" + activeMonsters.map(monster => monster.number).join(" / ");
-		inputButton.addEventListener('click', finding_monster);
+		else {
+			announcedText.textContent = "What? You're not even in battle!";
+		}
 	}
 
 		function finding_monster() {
@@ -456,7 +514,7 @@
 	        else {
 	        	inputText.value = "";
 				inputButton.removeEventListener('click', finding_monster);
-				ask_for_damage_taken()
+				ask_for_damage_taken();
 			}
 		}
 
@@ -466,6 +524,7 @@
 		}
 			function deal_damage() {
 				const DamageTaken = check_answer(1, 600, "damage");
+				announcedText.textContent = "Great! " + Monsterlist[MonsterChosenId] + " took " + DamageTaken + " damage!";
 				if (DamageTaken === null) return;
 				inputButton.removeEventListener('click', deal_damage);
 				CurrentHitpointAmounts[chosen.index] -= DamageTaken;
@@ -479,6 +538,49 @@
 				}
 				refresh_status_board();
 			}
+	function monster_deleted() {
+		for (let i = FullMonsterList.length - 1; i >= 0; i--) { //check the whole list, LOOPING BACKWARDS
+			if (FullMonsterList[i].startsWith(Monsterlist[MonsterChosenId])) { //find the ones that start with what we need
+				FullMonsterList.splice(i, 1);
+				CurrentHitpointAmounts.splice(i, 1);
+				FullHitPointAmounts.splice(i, 1);
+			}
+		}
+		Monsterlist.splice(MonsterChosenId, 1);
+		HitPointAmounts.splice(MonsterChosenId, 1);
+		Abilities.splice(MonsterChosenId, 1);
+		DiceAmounts.splice(MonsterChosenId, 1);
+		DiceTypes.splice(MonsterChosenId, 1);
+		ToHit.splice(MonsterChosenId, 1);
+		DamageModifiers.splice(MonsterChosenId, 1);
+		MonsterBattleQuantities.splice(MonsterChosenId, 1);
+		MonsterBattleNames.splice(MonsterChosenId, 1);
+		MonsterNumber = Monsterlist.length;
+		saveMonsters();
+		if (battleMode === true) {
+			refresh_status_board();
+			refresh_monster_list();
+		}
+		document.getElementById("monsterButtons").innerHTML = ""; //empty the zone
+		for (let i = 0; i < MonsterNumber; i++) { //go through each one	
+	 		const monsterButton = document.createElement("input");
+			monsterButton.type = "button";
+			monsterButton.id = "monster" + Monsterlist[i] + "button";
+			monsterButton.value = Monsterlist[i];
+			monsterButton.monsterIndex = i;
+			monsterButtons.appendChild(monsterButton); //put it in the minizone
+			monsterButton.addEventListener('click', monster_selected);
+			//that should have set up its own button?
+	}
+
+	function monster_info() {
+		announcedText.innerHTML = "This monster is named " + Monsterlist[MonsterChosenId] + ". <br>";
+		announcedText.innerHTML += "It has " + HitPointAmounts[MonsterChosenId] + " hit points. <br>";
+		announcedText.innerHTML+= "It has " + Abilities[MonsterChosenId].length + " abilities: <br>";
+		for (let a = 0; a < Abilities[MonsterChosenId].length; a++) {
+			announcedText.innerHTML += Abilities[MonsterChosenId][a] + " deals " + DiceAmounts[MonsterChosenId][a] + "d" + DiceTypes[MonsterChosenId][a] + " + " + DamageModifiers[MonsterChosenId][a] + " damage, with a to hit bonus of " + ToHit[MonsterChosenId][a] + ". <br>";
+		}
+	}
 
 	function refresh_status_board() {
 		let boardText = "<strong>Monster Health:</strong><br>"; //set the heading
@@ -502,8 +604,6 @@
 	}
 
 	function combat_over(){
-		refresh_status_board()
-    	refresh_monster_list()
 		document.getElementById('startbattlebutton').addEventListener('click', battle_sequence);
 		document.getElementById('startmonsterbutton').addEventListener('click', new_monster_name_inquiry);
 		document.getElementById("combatZone").innerHTML = ""; //empty the zone
@@ -512,6 +612,7 @@
 		FullMonsterList.length = 0;
 		FullHitPointAmounts.length = 0;
     	announcedText.textContent = "Combat over!";
+    	battleMode = false;
 	}
 
 	function round_of_attacks() {
@@ -556,11 +657,14 @@
 	function battle_sequence() {
 		MonsterBattleQuantities.length = 0;
 		MonsterBattleQuantities.push(...new Array(MonsterNumber).fill(0));
-		const FullMonsterList = [];
-		const CurrentHitpointAmounts = [];
-		const activeMonsters = [];
-		const FullHitPointAmounts = [];
+		MonsterBattleNames.length = 0;
+		MonsterBattleNames.push(...new Array(MonsterNumber).fill(0));
+		FullMonsterList.length = 0;
+		CurrentHitpointAmounts.length = 0;
+		activeMonsters.length = 0;
+		FullHitPointAmounts.length = 0;
 
+		battleMode = true;
 		document.getElementById('startbattlebutton').removeEventListener('click', battle_sequence);
 		document.getElementById('startmonsterbutton').removeEventListener('click', new_monster_name_inquiry);
     	announcedText.textContent = "Let's prep for combat! A bunch of buttons will appear. Just click them to indicate a new monster! You can also add a new one anytime!";
@@ -571,10 +675,6 @@
     	monsterCounter.id = "MonsterTally"; //give it its id  
     	combatZone.appendChild(monsterCounter); //put it in the zone
 
-	    	const monsterButtons = document.createElement("div"); //minizone for monsters' buttons
-			monsterButtons.id = "monsterButtons";
-			combatZone.appendChild(monsterButtons);
-
 			const combatControls = document.createElement("div"); //minizone the buttons that control combat
 			combatControls.id = "combatControls";
 			combatZone.appendChild(combatControls);
@@ -583,16 +683,6 @@
     	attacksCounter.id = "AttacksDisplay"; //id it
     	combatAttackZone.appendChild(attacksCounter); //put it in the zone
 
-    	for (let i = 0; i < Monsterlist.length; i++) { //ready a loop, set i to 0, go until it reaches the length, add 1 each time
-    		const monsterButton = document.createElement("input");
-    		monsterButton.type = "button";
-			monsterButton.id = "monster" + i + "button";
-    		monsterButton.value = Monsterlist[i];
-    		monsterButton.monsterIndex = i;
-    		monsterButtons.appendChild(monsterButton); //put it in the minizone
-    		monsterButton.addEventListener('click', monster_selected);
-    		//that loop sets up a button
-    	}
     	const roundstartbutton = document.createElement("input");
 		roundstartbutton.type = "button";
 		roundstartbutton.id = "StartsARound";
@@ -606,13 +696,6 @@
     	combatendbutton.value = "End combat mode!"; 
     	combatControls.appendChild(combatendbutton);
     	document.getElementById('EndCombat').addEventListener('click', combat_over); //setting up a button that ends battle
-
-    	const togglemodebutton = document.createElement("input");
-		togglemodebutton.type = "button";
-		togglemodebutton.id = "ChangesMode";
-    	togglemodebutton.value = "Switch to Damage Mode"; 
-    	combatControls.appendChild(togglemodebutton);
-    	togglemodebutton.addEventListener('click', toggle_mode); //setting up a button that changes the mode of the other buttons
 
     	const statusBoard = document.createElement("div");
 		statusBoard.id = "StatusBoard";

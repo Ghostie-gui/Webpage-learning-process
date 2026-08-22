@@ -7,11 +7,12 @@
 
 <script>
  	let ToBePrintedQuestion = "Blank Placeholder";
+ 	let VariableName = "Blank Placeholder";
 
  	function check_yes_or_no_answers() {
- 		let VariableName = document.getElementById('inputspace').value.toLowerCase();
+ 		VariableName = document.getElementById('inputspace').value.toLowerCase();
 
- 		const yesAnswers = ["yes", "yeah", "y"];
+ 	const yesAnswers = ["yes", "yeah", "y"];
     	const noAnswers = ["no", "n"];
 
  		if (yesAnswers.includes(VariableName)) {

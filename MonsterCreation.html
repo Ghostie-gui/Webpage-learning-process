@@ -451,20 +451,22 @@
 		function find_button_mode() {
 			inputButton.removeEventListener('click', find_button_mode)
 			const answer = inputText.value;
-			if (answer === "1") {monster_added}
-			else if (answer === "2") {monster_damaged}
-			else if (answer === "3") {monster_deleted}
-			else if (answer === "4") {monster_info}
+			if (answer === "1") {monster_added();}
+			else if (answer === "2") {monster_damaged();}
+			else if (answer === "3") {monster_deleted();}
+			else if (answer === "4") {monster_info();}
 			else {announcedText.textContent = "Cool, nothing will happen.";}
 			inputText.value = ""; 
 		}
 
 	function monster_added() {
-		announcedText.textContent = "How many will you add?";
-		inputButton.addEventListener('click', adding_the_monster);
+		if (battleMode === true) {
+			announcedText.textContent = "How many will you add?";
+			inputButton.addEventListener('click', adding_the_monster);
+		}
+		else {announcedText.textContent = "What? You're not even in battle!";}
 	}
 		function adding_the_monster() { //this function adds 1 to the monster's spot in the quantities list
-			if (battleMode === true) {
 				const addedAmount = check_answer(0, 50, "many new monsters");
 				if (addedAmount === null) return;
 				announcedText.textContent = "Added " + addedAmount + " new " + Monsterlist[MonsterChosenId] + "!";
@@ -479,10 +481,6 @@
 				refresh_monster_list();
 				refresh_status_board();
 			}
-			else {
-				announcedText.textContent = "What? You're not even in battle!";
-			}
-		}
 
 	function monster_damaged() {
 		if (battleMode === true) {
@@ -571,6 +569,7 @@
 			monsterButtons.appendChild(monsterButton); //put it in the minizone
 			monsterButton.addEventListener('click', monster_selected);
 			//that should have set up its own button?
+		}
 	}
 
 	function monster_info() {

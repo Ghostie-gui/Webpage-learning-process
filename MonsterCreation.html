@@ -2,6 +2,7 @@
 <div id="pageLayout">
 	<div id="announcementArea">
 		<p id="announcedtext"> Announcements will show up here! </p> <br> 
+		<p id="infotext"> </p> <br>
 	</div>
 	<div id="inputArea">
 		<input type="text" id="inputspace" />
@@ -321,6 +322,7 @@
 				ToHit.splice(0, MonsterNumber);
 				DamageModifiers.splice(0, MonsterNumber);
 				ChallengeRatings.splice(0, MonsterNumber);
+				MonsterType.splice(0, MonsterNumber);
 				MonsterNumber = Monsterlist.length;
 				MonsterBattleQuantities.length = 0;
 				MonsterBattleQuantities.push(...new Array(MonsterNumber).fill(0));
@@ -693,6 +695,8 @@
 		DiceTypes.splice(MonsterChosenId, 1);
 		ToHit.splice(MonsterChosenId, 1);
 		DamageModifiers.splice(MonsterChosenId, 1);
+		ChallengeRatings.splice(MonsterChosenId, 1);
+		MonsterType.splice(MonsterChosenId, 1);
 		MonsterBattleQuantities.splice(MonsterChosenId, 1);
 		MonsterBattleNames.splice(MonsterChosenId, 1);
 		MonsterNumber = Monsterlist.length;
@@ -707,9 +711,9 @@
 	function monster_info() {
 		announcedText.innerHTML = "This monster is named " + Monsterlist[MonsterChosenId] + ". <br>";
 		announcedText.innerHTML += "It has " + HitPointAmounts[MonsterChosenId] + " hit points. <br>";
-		announcedText.innerHTML += "It has " + Abilities[MonsterChosenId].length + " abilities: <br>";
 		announcedText.innerHTML += "Its Challenge Rating is " + ChallengeRatings[MonsterChosenId] + ". <br>";
 		announcedText.innerHTML += "Its type is " + MonsterType[MonsterChosenId] + ". <br>";
+		announcedText.innerHTML += "It has " + Abilities[MonsterChosenId].length + " abilities: <br>";
 		for (let a = 0; a < Abilities[MonsterChosenId].length; a++) {
 			announcedText.innerHTML += Abilities[MonsterChosenId][a] + " deals " + DiceAmounts[MonsterChosenId][a] + "d" + DiceTypes[MonsterChosenId][a] + " + " + DamageModifiers[MonsterChosenId][a] + " damage, with a to hit bonus of " + ToHit[MonsterChosenId][a] + ". <br>";
 		}
@@ -804,7 +808,7 @@
 		battleMode = true;
 		document.getElementById('startbattlebutton').removeEventListener('click', battle_sequence);
 		document.getElementById('startmonsterbutton').removeEventListener('click', new_monster_name_inquiry);
-		announcedText.textContent = "Let's prep for combat! A bunch of buttons will appear. Just click them to indicate a new monster! You can also add a new one anytime!";
+		announcedText.textContent = "Starting combat!";
 		document.getElementById("combatZone").innerHTML = ""; //empty the zone
 		document.getElementById("combatAttackZone").innerHTML = ""; //empty the zone
 
@@ -841,9 +845,31 @@
 </script>
 
 <style>
+
+	body {
+		background-color: #3f164b;
+		color: #ef9371;
+		font-family: "Pier Sans Light" sans-serif;
+	}
+
+	button, input[type="button"] {
+		background-color: #5c2c59;
+		color: #ef9371;
+		border: 1px solid #f0cd6e;
+	}
+
+	button, input[type="button"]:hover {
+		background-color: #f6cfc1;
+	}
+
+	input[type="text"], select {
+		background-color: #5c2c59;
+		color: #ef9371;
+	}
+
 	#pageLayout {
 		display: grid; /*Tell it its a grid*/
-		grid-template-columns: 1fr 2fr; /*1:2 ratio for the columns*/
+		grid-template-columns: 1fr 1fr; /*1:2 ratio for the columns*/
 		grid-template-areas: /*layout*/
 			"announcement attacks"
 			"input		attacks"
@@ -864,12 +890,16 @@
 	#pageLayout {gap: 10px;}
 	/*Add some padding*/
 
+	#announcementArea {
+		max-height: 5vh;
+		overflow-y: auto;
+	}
+
 	#pageLayout {
 		width: 100%;
 		max-height: 100vh;
 	}
 	#combatAttackZone { /* setting up the attack zone*/
-		border: 1px solid black;
 		max-height: 90vh;
 		overflow-y: auto;
 		padding: 10px;
@@ -879,6 +909,8 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: 5px;
+		overflow-y: auto;
+		max-height: 15vh;
 	}
 	#combatControls { /* setting up the combat controls*/
 		display: flex;
@@ -889,7 +921,7 @@
 	padding: 10px;
 	}
 	#monsterCounter {
-		border: 1px solid black;
+		border: 1px solid #f0cd6e;
 		padding: 6px;
 		width: 100%; /* of the given space */
 		overflow-y: auto;
@@ -898,11 +930,11 @@
 		box-sizing: border-box;
 	}
 	#StatusBoard { /* setting up the status board*/
-		border: 1px solid black;
+		border: 1px solid #f0cd6e;
 		padding: 6px;
 		width: 100%; /* of the given space */
 		overflow-y: auto;
-		max-height: 60vh;
+		max-height: 45vh;
 		margin-top: 10px;
 		box-sizing: border-box;
 	}
@@ -910,7 +942,7 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: 5px;
-		border-top: 1px solid black;
+		border-top: 1px	solid #f0cd6e;
 		padding-top: 10px;
 	}
 </style>

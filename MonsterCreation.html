@@ -305,6 +305,21 @@
 		reader.onload = function () {
 			try {
 				const monsterData = JSON.parse(reader.result);
+					for (let i = 0; i < monsterData.Monsterlist.length; i++){
+						for (let m = 0; m < Monsterlist.length; m++){
+							if (Monsterlist[m] == monsterData.Monsterlist[i]) {
+								Monsterlist.splice(m, 1);
+								HitPointAmounts.splice(m, 1);
+								Abilities.splice(m, 1);
+								DiceAmounts.splice(m, 1);
+								DiceTypes.splice(m, 1);
+								ToHit.splice(m, 1);
+								DamageModifiers.splice(m, 1);
+								ChallengeRatings.splice(m, 1);
+								MonsterType.splice(m, 1);
+							}
+						}
+					}
 				Monsterlist.push(...monsterData.Monsterlist);
 				HitPointAmounts.push(...monsterData.HitPointAmounts);
 				Abilities.push(...monsterData.Abilities);
@@ -314,15 +329,6 @@
 				DamageModifiers.push(...monsterData.DamageModifiers);
 				ChallengeRatings.push(...monsterData.ChallengeRatings);
 				MonsterType.push(...monsterData.MonsterType);
-				Monsterlist.splice(0, MonsterNumber);
-				HitPointAmounts.splice(0, MonsterNumber);
-				Abilities.splice(0, MonsterNumber);
-				DiceAmounts.splice(0, MonsterNumber);
-				DiceTypes.splice(0, MonsterNumber);
-				ToHit.splice(0, MonsterNumber);
-				DamageModifiers.splice(0, MonsterNumber);
-				ChallengeRatings.splice(0, MonsterNumber);
-				MonsterType.splice(0, MonsterNumber);
 				MonsterNumber = Monsterlist.length;
 				MonsterBattleQuantities.length = 0;
 				MonsterBattleQuantities.push(...new Array(MonsterNumber).fill(0));
@@ -337,7 +343,7 @@
 					refresh_monster_list();
 					refresh_status_board();
 				}
-				announcedText.textContent = "Ok! Congrats, your monsters have been imported, and the ones that were already there have been cleared. There are no more active monsters in your battle.";
+				announcedText.textContent = "Ok! Congrats, your monsters have been imported, and the ones that shared names have been replaced. There are no more active monsters in your battle.";
 				refresh_monster_buttons()
 			}
 			catch (error) {
@@ -592,11 +598,14 @@
 	}
 		function find_button_mode() {
 			inputButton.removeEventListener('click', find_button_mode)
-			const answer = inputText.value;
-			if (answer === "1") {monster_added();}
-			else if (answer === "2") {monster_damaged();}
-			else if (answer === "3") {monster_deleted();}
-			else if (answer === "4") {monster_info();}
+			const answer = Number(inputText.value);
+			if (Number.isInteger(answer) || !inputText.value.trim() === "") {
+				if (answer === 1) {monster_added(); console.log (answer);}
+				else if (answer === 2) {monster_damaged();}
+				else if (answer === 3) {monster_deleted();}
+				else if (answer === 4) {monster_info();}
+				else {announcedText.textContent = "Cool, nothing will happen.";}
+			}
 			else {announcedText.textContent = "Cool, nothing will happen.";}
 			inputText.value = ""; 
 		}
@@ -609,21 +618,22 @@
 		else {announcedText.textContent = "What? You're not even in battle!";}
 	}
 		function adding_the_monster() { //this function adds 1 to the monster's spot in the quantities list
-				const addedAmount = check_answer(0, 50, "many new monsters");
-				if (addedAmount === null) return;
-				announcedText.textContent = "Added " + addedAmount + " new " + Monsterlist[MonsterChosenId] + "!";
-				for (let i = 0; i < addedAmount; i++) {
-					MonsterBattleQuantities[MonsterChosenId] = MonsterBattleQuantities[MonsterChosenId] + 1;
-					MonsterBattleNames[MonsterChosenId] = MonsterBattleNames[MonsterChosenId] + 1;
-					CurrentMonsterName = Monsterlist[MonsterChosenId] + MonsterBattleNames[MonsterChosenId]; //to avoid duplicates
-					FullMonsterList.push(CurrentMonsterName); 
-					CurrentHitpointAmounts.push(HitPointAmounts[MonsterChosenId]); 
-					FullHitPointAmounts.push(HitPointAmounts[MonsterChosenId]); 
-				}
-				refresh_monster_list();
-				refresh_status_board();
-				refresh_monster_buttons();
+			inputButton.removeEventListener('click', adding_the_monster);
+			const addedAmount = check_answer(0, 50, "many new monsters");
+			if (addedAmount === null) return;
+			announcedText.textContent = "Added " + addedAmount + " new " + Monsterlist[MonsterChosenId] + "!";
+			for (let i = 0; i < addedAmount; i++) {
+				MonsterBattleQuantities[MonsterChosenId] = MonsterBattleQuantities[MonsterChosenId] + 1;
+				MonsterBattleNames[MonsterChosenId] = MonsterBattleNames[MonsterChosenId] + 1;
+				CurrentMonsterName = Monsterlist[MonsterChosenId] + MonsterBattleNames[MonsterChosenId]; //to avoid duplicates
+				FullMonsterList.push(CurrentMonsterName); 
+				CurrentHitpointAmounts.push(HitPointAmounts[MonsterChosenId]); 
+				FullHitPointAmounts.push(HitPointAmounts[MonsterChosenId]); 
 			}
+			refresh_monster_list();
+			refresh_status_board();
+			refresh_monster_buttons();
+		}
 
 	function monster_damaged() {
 		if (battleMode === true) {
@@ -646,6 +656,7 @@
 	}
 
 		function finding_monster() {
+			inputButton.removeEventListener('click', finding_monster);
 			chosenMonster = (inputText.value);
 			chosen = activeMonsters.find(monster => monster.number === chosenMonster); //checking the whole thing to see if one of the numbers is the one they inputted
 			if (!chosen) {
@@ -654,7 +665,6 @@
 			}
 			else {
 				inputText.value = "";
-				inputButton.removeEventListener('click', finding_monster);
 				ask_for_damage_taken();
 			}
 		}
@@ -664,10 +674,10 @@
 			inputButton.addEventListener('click', deal_damage);
 		}
 			function deal_damage() {
+				inputButton.removeEventListener('click', deal_damage);
 				const DamageTaken = check_answer(1, 600, "damage");
 				if (DamageTaken === null) return;
 				announcedText.textContent = "Great! " + Monsterlist[MonsterChosenId] + " took " + DamageTaken + " damage!";
-				inputButton.removeEventListener('click', deal_damage);
 				CurrentHitpointAmounts[chosen.index] -= DamageTaken;
 				if (CurrentHitpointAmounts[chosen.index] <= 0) {
 					announcedText.textContent = "Thank you! " + Monsterlist[MonsterChosenId] + chosenMonster + " is dead now!";
